@@ -38,17 +38,25 @@ LOCALES =
 # translation
 SOURCES = \
 	__init__.py \
-	geocsveditor.py \
-	geocsveditor_dialog.py
+	geocsv_controller.py \
+	geocsv_exception.py \
+	geocsv_model.py \
+	geocsv_plugin.py \
+	geocsv_service.py \
+	geocsv_ui.py 			
 
 PLUGINNAME = geocsveditor
 
 PY_FILES = \
-	geocsveditor.py \
-	geocsveditor_dialog.py \
+	geocsv_controller.py \
+	geocsv_exception.py \
+	geocsv_model.py \
+	geocsv_plugin.py \
+	geocsv_service.py \
+	geocsv_ui.py \
 	__init__.py
 
-UI_FILES = geocsveditor_dialog_base.ui
+UI_FILES = geocsv_dialog_new.ui
 
 EXTRAS = icon.png metadata.txt
 
