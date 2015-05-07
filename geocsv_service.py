@@ -176,7 +176,7 @@ class GeoCsvDataSourceHandler:
                     row = []
                     for attribute in attributeNames:
                         row.append(feature[feature.fieldNameIndex(attribute)])
-                    writer.writerow(row)                
+                    writer.writerow([unicode(s).encode("utf-8") for s in row])                
         except:
             raise       
                                             
