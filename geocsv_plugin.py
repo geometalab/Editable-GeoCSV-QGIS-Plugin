@@ -31,15 +31,15 @@ from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsGeometry, QgsMapL
 
 from geocsv_controller import GeoCsvNewController
 
-import sys;
-sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
-import pydevd  
+# import sys;
+# sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
+# import pydevd  
 
 class EditableGeoCsv:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):          
-        pydevd.settrace()            
+#         pydevd.settrace()            
         """Constructor.
 
         :param iface: An interface instance that will be passed to this class

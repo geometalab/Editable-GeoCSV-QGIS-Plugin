@@ -17,18 +17,25 @@ from geocsv_exception import *
 class GeoCsvNewController:
     
     def __init__(self, vectorLayers):
-        newDialog = GeoCsvDialogNew()        
-        self.initConnections(newDialog)
-        self.newDialog = newDialog
+        self.newDialog = GeoCsvDialogNew()        
+        self.initConnections()
+        self.initVisibility()
         self.vectorLayers = vectorLayers
         self.dataSourceHandler = None
         self.vectorDescriptor = None
     
-    def initConnections(self, newDialog):
-        newDialog.fileBrowserButton.clicked.connect(self.onFileBrowserButton)
-        newDialog.filePath.textChanged.connect(self.onFilePathChange)
-        newDialog.acceptButton.clicked.connect(newDialog.accept)
-        newDialog.rejectButton.clicked.connect(newDialog.reject)
+    def initConnections(self):
+        self.newDialog.fileBrowserButton.clicked.connect(self.onFileBrowserButton)
+        self.newDialog.filePath.textChanged.connect(self.onFilePathChange)
+        self.newDialog.acceptButton.clicked.connect(self.newDialog.accept)
+        self.newDialog.rejectButton.clicked.connect(self.newDialog.reject)
+        self.newDialog.pointGeometryTypeRadio.toggled.connect(self.toggleGeometryType)
+        self.newDialog.wktGeometryTypeRadio.toggled.connect(self.toggleGeometryType)
+        
+    def initVisibility(self):
+        self.hideManualGeometryTypeWidget() 
+        self.toggleGeometryType()       
+            
             
     def createCsvVectorLayer(self):                        
         self.newDialog.show()
@@ -56,12 +63,31 @@ class GeoCsvNewController:
             try:
                 self.vectorDescriptor = self.dataSourceHandler.createCsvVectorDescriptor()
                 self.newDialog.filePathErrorLabel.setText("")
+                self.hideManualGeometryTypeWidget()
             except GeoCsvUnknownAttributeException as e:
                 self.newDialog.filePathErrorLabel.setText("unknown csvt attribute {} at index {}".format(e.attributeName, e.attributeIndex))
+                self.showManualGeometryTypeWidget()
             except CsvCsvtMissmatchException:
                 self.newDialog.filePathErrorLabel.setText("csv<->csvt missmatch")
+                self.showManualGeometryTypeWidget()
             except:
-                self.newDialog.filePathErrorLabel.setText("missing files")
+                self.newDialog.filePathErrorLabel.setText("no csvt file found")
+                self.showManualGeometryTypeWidget()
         except:
             self.newDialog.filePathErrorLabel.setText("invalid file path")
+            self.hideManualGeometryTypeWidget()
+            
+    def toggleGeometryType(self):
+        if self.newDialog.pointGeometryTypeRadio.isChecked():
+             self.newDialog.wktTypeWidget.hide()
+             self.newDialog.pointTypeWidget.show()
+        else:
+            self.newDialog.pointTypeWidget.hide()
+            self.newDialog.wktTypeWidget.show()
+    
+    def showManualGeometryTypeWidget(self):
+        self.newDialog.manualGeometryWidget.show()
+    
+    def hideManualGeometryTypeWidget(self):
+        self.newDialog.manualGeometryWidget.hide()               
          
