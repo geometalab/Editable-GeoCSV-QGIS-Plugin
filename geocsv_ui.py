@@ -26,7 +26,7 @@ import os
 from PyQt4 import QtGui, uic
 
 FORM_CLASS_NEW, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'geocsveditor_dialog_new.ui'))
+    os.path.dirname(__file__), 'geocsv_dialog_new.ui'))
 
 
 class GeoCsvDialogNew(QtGui.QDialog, FORM_CLASS_NEW):
