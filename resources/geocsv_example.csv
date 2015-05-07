@@ -1,2 +1,0 @@
-integer;real;string;date;time;datetime;lon;lat;wkt
-12;2.4;"string test";2015-12-02;13:47:30;2015-12-02 13:47:30;8.8249;47.2274;POINT(8.8249 47.2274)
