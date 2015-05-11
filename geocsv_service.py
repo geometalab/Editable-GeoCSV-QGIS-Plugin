@@ -23,7 +23,7 @@ class GeoCsvDataSourceHandler:
             self._csvDialect = 'excel-semicolon'
             self._csvtDialect = 'excel-semicolon'
             self._prjDialect = 'excel-semicolon'             
-        except:
+        except (FileNotFoundException, UnknownFileFormatException):
             raise InvalidDataSourceException()
         self._examineDataSource()
         
@@ -40,43 +40,100 @@ class GeoCsvDataSourceHandler:
     def getPathToCsvFile(self):
         return self._fileContainer.pathToCsvFile
         
-    def createCsvVectorDescriptor(self):                 
+    def createCsvVectorDescriptorFromCsvt(self):                 
         if not self.hasCsvt():
             raise MissingCsvtException()                          
-        attributes = []
+        attributeTypes = None
         try:
-            attributes = self._extractGeoCsvAttributesFromCsvt()
-        except GeoCsvUnknownAttributeException:
+            attributeTypes = self._extractGeoCsvAttributeTypesFromCsvt()
+        except (GeoCsvUnknownAttributeException, FileIOException):
             raise
-        except:
-            raise FileIOException()                                                    
-        try:                 
-            attributeNames = self.extractAttributeNamesFromCsv()
-        except:
-            raise FileIOException()
-                  
-        if len(attributes) != len(attributeNames):
-            raise CsvCsvtMissmatchException()
-        
-        for i, attribute in enumerate(attributes):
-            attribute.name = attributeNames[i]
-        
-        descriptor = None            
-        try:            
-            descriptor = self.getDescriptorFromAttributesList(attributes)
-            if descriptor and descriptor.descriptorType == CsvVectorLayerDescriptor.wktDescriptorType:
-                firstRow = self.getSampleRowsFromCSV(1)
-                if len(firstRow) == 0:
-                    raise GeoCsvUnknownGeometryTypeException()                                    
-                descriptor.determineWktGeometryTypeFromRow(firstRow[0])
-            descriptor.layerName = self._fileContainer.fileName
-        except GeoCsvMultipleGeoAttributeException:
+        attributes = None            
+        try:
+            attributes = self._createGeoCSVAttributes(attributeTypes)
+        except (CsvCsvtMissmatchException, FileIOException):
+            raise                
+        descriptor = None
+        firstDataRow = None
+        try:
+            firstRow = self.getSampleRowsFromCSV(1)
+            if len(firstRow) == 0:
+                raise GeoCsvUnknownGeometryTypeException()
+            firstDataRow = firstRow[0]
+        except (GeoCsvUnknownGeometryTypeException, FileIOException):
+            raise 
+        try:
+            descriptor = self._createAndConfigureDescriptorFromAttributesList(attributes, firstDataRow)        
+        except (GeoCsvMultipleGeoAttributeException,
+                GeoCsvMalformedGeoAttributeException,
+                GeoCsvUnknownGeometryTypeException,
+                FileIOException):
             raise
-        except GeoCsvMalformedGeoAttributeException:
+        return descriptor                                                             
+    
+    def manuallyCreateCsvPointVectorDescriptor(self, eastingIndex, northingIndex):                                
+        firstDataRow = None
+        try:
+            firstRow = self.getSampleRowsFromCSV(1)
+            if len(firstRow) == 0:
+                raise GeoCsvUnknownGeometryTypeException()
+            firstDataRow = firstRow[0]
+        except (GeoCsvUnknownGeometryTypeException, FileIOException):
+            raise         
+        
+        attributeTypes = self._extractGeoCsvAttributeTypesFromFirstDataRow(firstDataRow)
+        if not eastingIndex < len(attributeTypes) or not northingIndex < len(attributeTypes):
+            raise GeoCsvUnknownGeometryTypeException()                
+        attributeTypes[eastingIndex] = GeoCsvAttributeType(GeoCsvAttributeType.easting)
+        attributeTypes[northingIndex] = GeoCsvAttributeType(GeoCsvAttributeType.northing)   
+        
+        attributes = None
+        try:
+            attributes = self._createGeoCSVAttributes(attributeTypes)
+        except CsvCsvtMissmatchException, FileIOException:
             raise
         
-        return descriptor
-            
+        descriptor = None
+        try:
+            descriptor = self._createAndConfigureDescriptorFromAttributesList(attributes, firstDataRow)        
+        except (GeoCsvMultipleGeoAttributeException,
+                GeoCsvMalformedGeoAttributeException,
+                GeoCsvUnknownGeometryTypeException,
+                FileIOException):
+            raise
+        return descriptor         
+          
+    
+    def manuallyCreateCsvWktVectorDescriptor(self, wktIndex):
+        firstDataRow = None
+        try:
+            firstRow = self.getSampleRowsFromCSV(1)
+            if len(firstRow) == 0:
+                raise GeoCsvUnknownGeometryTypeException()
+            firstDataRow = firstRow[0]
+        except (GeoCsvUnknownGeometryTypeException, FileIOException):
+            raise         
+        
+        attributeTypes = self._extractGeoCsvAttributeTypesFromFirstDataRow(firstDataRow)
+        if not wktIndex < len(attributeTypes):
+            raise GeoCsvUnknownGeometryTypeException()                
+        attributeTypes[wktIndex] = GeoCsvAttributeType(GeoCsvAttributeType.wkt)
+        
+        attributes = None
+        try:
+            attributes = self._createGeoCSVAttributes(attributeTypes)
+        except CsvCsvtMissmatchException, FileIOException:
+            raise
+        
+        descriptor = None
+        try:
+            descriptor = self._createAndConfigureDescriptorFromAttributesList(attributes, firstDataRow)        
+        except (GeoCsvMultipleGeoAttributeException,
+                GeoCsvMalformedGeoAttributeException,
+                GeoCsvUnknownGeometryTypeException,
+                FileIOException):
+            raise
+        return descriptor     
             
     def createFeaturesFromCsv(self, vectorLayerDescriptor):
         ':type vectorLayerDescriptor:CsvVectorLayerDescriptor'
@@ -93,24 +150,23 @@ class GeoCsvDataSourceHandler:
                         feature.setAttributes(row)
                         features.append(feature)
         return features
-              
-    def _extractGeoCsvAttributesFromCsvt(self):
-        if not self.hasCsvt():
-            raise MissingCsvtException()     
-        attributes = []
+    
+    def syncFeaturesWithCsv(self, vectorLayerDescriptor, features):
+        ':type vectorLayerDescriptor:CsvVectorLayerDescriptor'
         try:
-            with open(self._fileContainer.pathToCsvtFile, 'rb') as csvfile:
-                reader = csv.reader(csvfile, dialect=self._csvtDialect)                                
-                typeRow = reader.next()
-                for i, attributeType in enumerate(typeRow):
-                    # ToDo extract precision and length information
-                    if not attributeType.lower() in GeoCsvAttributeType.__dict__.values():
-                        raise GeoCsvUnknownAttributeException(attributeType, i)  
-                    attributes.append(GeoCSVAttribute(attributeType.lower()))  
+            with open(self._fileContainer.pathToCsvFile, 'w') as csvfile:
+                writer = csv.writer(csvfile, dialect=self._csvDialect)
+                attributeNames = [attribute.name for attribute in vectorLayerDescriptor.attributes]
+                # write header row
+                writer.writerow(attributeNames)
+                for feature in features:
+                    row = []
+                    for attribute in attributeNames:
+                        row.append(feature[feature.fieldNameIndex(attribute)])
+                    writer.writerow([unicode(s).encode("utf-8") for s in row])                
         except:
-            raise
-        return attributes
-        
+            raise FileIOException()      
+                            
     def extractAttributeNamesFromCsv(self):
         attributeNames = []
         try :
@@ -123,28 +179,8 @@ class GeoCsvDataSourceHandler:
                     else:
                         attributeNames.append('field' + (i + 1))
         except:
-            raise
+            raise FileIOException()
         return attributeNames
-        
-    def getDescriptorFromAttributesList(self, attributes): 
-        
-        descriptor = None
-        
-        eastings = [i for i, v in enumerate(attributes) if v.type == GeoCsvAttributeType.easting]
-        northings = [i for i, v in enumerate(attributes) if v.type == GeoCsvAttributeType.northing]
-        wkts = [i for i, v in enumerate(attributes) if v.type == GeoCsvAttributeType.wkt]
-                               
-        if len(eastings) > 1 or len(northings) > 1 or len(wkts) > 1:
-            raise GeoCsvMultipleGeoAttributeException()
-        if (len(eastings) == 1 and len(northings) == 0) or (len(eastings) == 0 and len(northings) == 1):
-            raise GeoCsvMalformedGeoAttributeException()
-        
-        if len(eastings) == 1 and len(northings) == 1:
-            descriptor = PointCsvVectorLayerDescriptor(attributes, eastings[0], northings[0])
-        elif len(wkts) == 1:
-            descriptor = WktCsvVectorLayerDescriptor(attributes, wkts[0])
-        
-        return descriptor
         
     def getSampleRowsFromCSV(self, maxRows=3):
         try :
@@ -161,29 +197,95 @@ class GeoCsvDataSourceHandler:
                     row = reader.next()
                 return rows
         except:
-            raise
-            
-        
-    def syncFeaturesWithCsv(self, vectorLayerDescriptor, features):
-        ':type vectorLayerDescriptor:CsvVectorLayerDescriptor'
-        try:
-            with open(self._fileContainer.pathToCsvFile, 'w') as csvfile:
-                writer = csv.writer(csvfile, dialect=self._csvDialect)
-                attributeNames = [attribute.name for attribute in vectorLayerDescriptor.attributes]
-                # write header row
-                writer.writerow(attributeNames)
-                for feature in features:
-                    row = []
-                    for attribute in attributeNames:
-                        row.append(feature[feature.fieldNameIndex(attribute)])
-                    writer.writerow([unicode(s).encode("utf-8") for s in row])                
-        except:
-            raise       
-                                            
-    def guessTypesFromFirstRow(self, row):
-        pass   
-    
+            raise FileIOException()
 
+              
+    def _extractGeoCsvAttributeTypesFromCsvt(self):
+        if not self.hasCsvt():
+            raise MissingCsvtException()     
+        attributeTypes = []
+        try:
+            with open(self._fileContainer.pathToCsvtFile, 'rb') as csvfile:
+                reader = csv.reader(csvfile, dialect=self._csvtDialect)                                
+                typeRow = reader.next()
+                for attributeType in typeRow:
+                    # ToDo extract precision and length information
+                    try:
+                        attributeTypes.append(GeoCsvAttributeType(attributeType.lower()))
+                    except GeoCsvUnknownAttributeException:
+                        raise
+        except:
+            raise FileIOException()
+        return attributeTypes
+
+    
+    def _extractGeoCsvAttributeTypesFromFirstDataRow(self, row):
+        attributeTypes = []
+        for value in row:
+            attributeType = None
+            if value.isdigit():
+                attributeType = GeoCsvAttributeType.integer
+            else:
+                try:
+                    float(value)
+                    attributeType = GeoCsvAttributeType.real
+                except:
+                    attributeType = GeoCsvAttributeType.string
+            attributeTypes.append(GeoCsvAttributeType(attributeType))                        
+        return attributeTypes
+    
+    
+    def _createGeoCSVAttributes(self, attributeTypes):
+        attributes = []
+        try:                 
+            attributeNames = self.extractAttributeNamesFromCsv()
+        except:
+            raise FileIOException()                  
+        if len(attributeTypes) != len(attributeNames):
+            raise CsvCsvtMissmatchException()        
+        for i, attributeType in enumerate(attributeTypes):
+            attributes.append(GeoCSVAttribute(attributeType, attributeNames[i]))            
+        return attributes
+        
+        
+    def _createAndConfigureDescriptorFromAttributesList(self, attributes, firstDataRow):
+        descriptor = None
+        try:
+            descriptor = self._getDescriptorFromAttributesList(attributes)                                                                                                                
+            descriptor.layerName = self._fileContainer.fileName            
+        except (GeoCsvMultipleGeoAttributeException,
+                GeoCsvMalformedGeoAttributeException):
+            raise                                           
+        try:            
+            descriptor.configureAndValidateWithSampleRow(firstDataRow)
+        except GeoCsvUnknownGeometryTypeException:
+            raise        
+        return descriptor
+
+
+    def _getDescriptorFromAttributesList(self, attributes): 
+        
+        descriptor = None
+        
+        eastings = [i for i, v in enumerate(attributes) if v.type.attributeType == GeoCsvAttributeType.easting]
+        northings = [i for i, v in enumerate(attributes) if v.type.attributeType == GeoCsvAttributeType.northing]
+        wkts = [i for i, v in enumerate(attributes) if v.type.attributeType == GeoCsvAttributeType.wkt]
+                               
+        if len(eastings) > 1 or len(northings) > 1 or len(wkts) > 1:
+            raise GeoCsvMultipleGeoAttributeException()
+        if (len(eastings) == 1 and len(northings) == 0) or (len(eastings) == 0 and len(northings) == 1):
+            raise GeoCsvMalformedGeoAttributeException()
+        
+        if len(eastings) == 1 and len(northings) == 1:
+            descriptor = PointCsvVectorLayerDescriptor(attributes, eastings[0], northings[0])
+        elif len(wkts) == 1:
+            descriptor = WktCsvVectorLayerDescriptor(attributes, wkts[0])
+        else:
+            raise GeoCsvMalformedGeoAttributeException()
+        return descriptor
+  
+  
+                                        
 class GeoCsvFileContainer:
             
     def __init__(self, pathToCsvFile):

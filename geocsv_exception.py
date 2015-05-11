@@ -6,9 +6,8 @@ Created on 07.05.2015
 
 
 class GeoCsvUnknownAttributeException(Exception):
-    def __init__(self, attributeName, attributeIndex):
-        self.attributeName = attributeName
-        self.attributeIndex = attributeIndex
+    def __init__(self, attributeName):
+        self.attributeName = attributeName        
         
 class GeoCsvMultipleGeoAttributeException(Exception):
     pass
