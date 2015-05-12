@@ -101,6 +101,10 @@ class GeoCsvDataSourceHandler:
                 GeoCsvUnknownGeometryTypeException,
                 FileIOException):
             raise
+        try:
+            self._updateCsvtFile(attributeTypes)
+        except FileIOException:
+            raise
         return descriptor         
           
     
@@ -133,6 +137,10 @@ class GeoCsvDataSourceHandler:
                 GeoCsvUnknownGeometryTypeException,
                 FileIOException):
             raise
+        try:
+            self._updateCsvtFile(attributeTypes)
+        except FileIOException:
+            raise            
         return descriptor     
             
     def createFeaturesFromCsv(self, vectorLayerDescriptor):
@@ -283,9 +291,16 @@ class GeoCsvDataSourceHandler:
         else:
             raise GeoCsvMalformedGeoAttributeException()
         return descriptor
-  
-  
-                                        
+    
+    def _updateCsvtFile(self, attributeTypes):
+        try: 
+            with open(self._fileContainer.constructCsvtPath(), "w+") as csvtfile:                 
+                writer = csv.writer(csvtfile, dialect=self._csvDialect)
+                geoCsvAttributeTypes = [attributeType.attributeType for attributeType in attributeTypes]
+                writer.writerow([unicode(s).encode("utf-8") for s in geoCsvAttributeTypes])
+        except:
+            raise FileIOException()         
+                                                                 
 class GeoCsvFileContainer:
             
     def __init__(self, pathToCsvFile):
@@ -308,6 +323,9 @@ class GeoCsvFileContainer:
     def hasPrj(self):
         return self.pathToPrj != ''
     
+    def constructCsvtPath(self):
+        return self.rootPath +'.csvt'
+    
     def _createPathToCSVT(self):
         self.pathToCsvtFile = ""
         if os.path.exists(self.rootPath + '.csvt'):
@@ -319,7 +337,8 @@ class GeoCsvFileContainer:
             self.pathToPrj = self.rootPath + '.prj'    
             
     def _createFileName(self): 
-        self.fileName = os.path.basename(self.rootPath)  
+        self.fileName = os.path.basename(self.rootPath)
+        
 
 class GeoCsvVectorLayerFactory:
      
