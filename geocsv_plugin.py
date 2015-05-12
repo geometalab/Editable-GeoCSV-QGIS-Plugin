@@ -22,22 +22,22 @@
 """
 import os.path
  
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QVariant
-from PyQt4.QtGui import QIcon, QAction, QFileDialog
+from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from PyQt4.QtGui import QIcon, QAction
 # Initialize Qt resources from file resources.py
 import resources_rc
 
 from geocsv_controller import GeoCsvNewController
 
-# import sys;
-# sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
-# import pydevd
+import sys;
+sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
+import pydevd
 
 class EditableGeoCsv:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):          
-#         pydevd.settrace()            
+        pydevd.settrace()            
         """Constructor.
 
         :param iface: An interface instance that will be passed to this class

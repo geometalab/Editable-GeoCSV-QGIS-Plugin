@@ -223,13 +223,16 @@ class GeoCsvDataSourceHandler:
                     reader.next()                    
                 rowCounter = 0   
                 rows = [] 
-                row = reader.next()                
+                row = reader.next()                                               
                 while row and rowCounter < maxRows:
                     rows.append(row)
                     rowCounter += 1
-                    row = reader.next()
+                    try:
+                        row = reader.next()
+                    except StopIteration:
+                        pass
                 return rows
-        except:
+        except:                      
             raise FileIOException()
 
 
@@ -239,23 +242,20 @@ class GeoCsvDataSourceHandler:
               
     def _extractGeoCsvAttributeTypesFromCsvt(self):
         if not self.hasCsvt():
-            raise MissingCsvtException()     
-        attributeTypes = []
+            raise MissingCsvtException()             
         try:
+            attributeTypes = []
             with open(self._fileContainer.pathToCsvtFile, 'rb') as csvfile:
                 reader = csv.reader(csvfile, dialect=self._csvtDialect)                                
                 typeRow = reader.next()
-                for attributeType in typeRow:
-                    # ToDo extract precision and length information
-                    try:
-                        attributeTypes.append(GeoCsvAttributeType(attributeType.lower()))
-                    except GeoCsvUnknownAttributeException:
-                        raise
+                for csvtString in typeRow:
+                    attributeTypes.append(GeoCsvAttributeType.fromCsvtString(csvtString))
+            return attributeTypes      
+        except GeoCsvUnknownAttributeException:
+            raise        
         except:
             raise FileIOException()
-        return attributeTypes
-
-    
+        
     def _extractGeoCsvAttributeTypesFromFirstDataRow(self, row):
         attributeTypes = []
         for value in row:
@@ -339,7 +339,7 @@ class GeoCsvDataSourceHandler:
         try: 
             with open(self._fileContainer.constructCsvtPath(), "w+") as csvtfile:                 
                 writer = csv.writer(csvtfile, dialect=self._csvDialect)
-                geoCsvAttributeTypes = [attributeType.attributeType for attributeType in attributeTypes]
+                geoCsvAttributeTypes = [attributeType.toCsvtString() for attributeType in attributeTypes]
                 writer.writerow([unicode(s).encode("utf-8") for s in geoCsvAttributeTypes])
         except:
             raise FileIOException()         

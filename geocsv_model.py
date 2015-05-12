@@ -40,7 +40,47 @@ class GeoCsvAttributeType:
         self.attributeType = attributeType
         self.length = length
         self.precision = precision
-            
+    
+    @staticmethod    
+    def fromCsvtString(csvtString):
+        try:
+            csvtString = csvtString.lower()
+            openBracketIndex = csvtString.find('(')
+            attributeType = None                        
+            length = 0
+            precision = 0                        
+            if not openBracketIndex == -1:
+                closingBracketIndex = csvtString.find(')')
+                if closingBracketIndex == -1:
+                    raise GeoCsvUnknownAttributeException                                                        
+                attributeType = csvtString[0:openBracketIndex]
+                additionalInfo = csvtString[openBracketIndex+1:closingBracketIndex]
+                splittedAddionalInfo = additionalInfo.split('.')
+                try:
+                    if splittedAddionalInfo[0]:
+                        length = int(splittedAddionalInfo[0])
+                    if len(splittedAddionalInfo) == 2:
+                        precision = int(splittedAddionalInfo[1])
+                except ValueError:
+                    raise GeoCsvUnknownAttributeException
+            else:
+                attributeType = csvtString 
+            return GeoCsvAttributeType(attributeType, length, precision)
+        except GeoCsvUnknownAttributeException:
+            raise     
+        
+    def toCsvtString(self):
+        additionalInfo = ''
+        if not self.length == 0:
+            additionalInfo = str(self.length)
+        if not self.precision == 0:
+            if additionalInfo:
+                additionalInfo += '.'
+            additionalInfo += str(self.precision)
+        if additionalInfo:
+            additionalInfo = '('+additionalInfo+')'
+        return self.attributeType.capitalize() + additionalInfo        
+                            
 class GeoCSVAttribute:
     def __init__(self, attributeType, attributeName):        
         self.name = attributeName        
@@ -50,10 +90,14 @@ class GeoCSVAttribute:
         qgsField = None
         if self.type.attributeType == GeoCsvAttributeType.integer:
             qgsField = QgsField(self.name, QVariant.Int)
-        elif self.type.attributeType == GeoCsvAttributeType.easting or self.type == GeoCsvAttributeType.northing or self.type == GeoCsvAttributeType.real:
+        elif self.type.attributeType == GeoCsvAttributeType.easting or self.type.attributeType == GeoCsvAttributeType.northing or self.type.attributeType == GeoCsvAttributeType.real:
             qgsField = QgsField(self.name, QVariant.Double)
         else:
             qgsField = QgsField(self.name, QVariant.String)
+        if not self.type.length == 0:
+            qgsField.setLength(self.type.length)
+        if not self.type.precision == 0:
+            qgsField.setPrecision(self.type.precision) 
         return qgsField     
             
 class CsvVectorLayerDescriptor:
