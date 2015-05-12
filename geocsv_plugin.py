@@ -21,19 +21,17 @@
  ***************************************************************************/
 """
 import os.path
-import csv
  
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, QVariant
 from PyQt4.QtGui import QIcon, QAction, QFileDialog
 # Initialize Qt resources from file resources.py
 import resources_rc
-from qgis.core import QgsVectorLayer, QgsField, QgsFeature, QgsGeometry, QgsMapLayerRegistry
 
 from geocsv_controller import GeoCsvNewController
 
 import sys;
 sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
-import pydevd  
+import pydevd
 
 class EditableGeoCsv:
     """QGIS Plugin Implementation."""
@@ -66,8 +64,7 @@ class EditableGeoCsv:
                 QCoreApplication.installTranslator(self.translator)
                 
         self.vectorLayers = []        
-        self.newController = GeoCsvNewController(self.vectorLayers)
-        
+                
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&GeoCSV Editor')
@@ -165,14 +162,13 @@ class EditableGeoCsv:
         return action
 
     def initGui(self):
-        icon_path = ':/plugins/geocsveditor/icon.png'
+        icon_path = ':/plugins/geocsveditor/icon.png'        
         self.add_action(
             icon_path,
             text=self.tr(u'GeoCSV Editor'),
-            callback=self.newController.createCsvVectorLayer,
+            callback=lambda f: GeoCsvNewController.getInstance().createCsvVectorLayer(self.vectorLayers),
             parent=self.iface.mainWindow())
-
-
+                    
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
         for action in self.actions:

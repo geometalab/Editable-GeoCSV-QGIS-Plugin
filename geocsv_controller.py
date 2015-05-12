@@ -3,6 +3,8 @@ Created on 05.05.2015
 
 @author: faustos
 '''
+import weakref
+
 
 from qgis.core import QgsMapLayerRegistry
 
@@ -10,18 +12,25 @@ from qgis.core import QgsMapLayerRegistry
 from PyQt4.QtGui import QFileDialog
 
 from geocsv_ui import GeoCsvDialogNew
-from geocsv_service import GeoCsvVectorLayerFactory, GeoCsvDataSourceHandler
+from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory
 from geocsv_model import CsvVectorLayerDescriptor
 
 from geocsv_exception import *
 
 class GeoCsvNewController:
+
+    _instance = None
     
-    def __init__(self, vectorLayers):        
-        self.vectorLayers = vectorLayers
+    @classmethod
+    def getInstance(cls):
+        if not cls._instance:
+            cls._instance = GeoCsvNewController()
+        return cls._instance
+
+    def __init__(self):                
         self.geometryFieldUpdate = False
         
-    def createCsvVectorLayer(self):  
+    def createCsvVectorLayer(self, vectorLayers):  
         self.dataSourceHandler = None
         self.vectorDescriptor = None
         self.newDialog = GeoCsvDialogNew()        
@@ -30,12 +39,11 @@ class GeoCsvNewController:
         self.newDialog.show()
         result = self.newDialog.exec_()
         if result:
-            if self.dataSourceHandler and self.vectorDescriptor:                
-                csvVectorLayer = GeoCsvVectorLayerFactory.createVectorLayer(self.dataSourceHandler, self.vectorDescriptor)                                
+            if self.dataSourceHandler and self.vectorDescriptor:                                
+                csvVectorLayer = GeoCsvVectorLayerFactory.createVectorLayer(self.dataSourceHandler, self.vectorDescriptor)                                            
                 QgsMapLayerRegistry.instance().addMapLayer(csvVectorLayer.vectorLayer)
-                self.vectorLayers.append(csvVectorLayer)         
-    
-    
+                vectorLayers.append(csvVectorLayer)         
+            
     def initConnections(self):
         self.newDialog.fileBrowserButton.clicked.connect(self.onFileBrowserButton)
         self.newDialog.filePath.textChanged.connect(self.onFilePathChange)
@@ -60,6 +68,9 @@ class GeoCsvNewController:
         csvFilePath = self.newDialog.filePath.text()
         if csvFilePath:                            
             self._updateDataSource(csvFilePath)
+            
+    def onCsvFileWritingError(self):
+        pass
             
     def _updateDataSource(self, csvFilePath):
         try:        
@@ -149,5 +160,19 @@ class GeoCsvNewController:
         self.newDialog.manualGeometryWidget.hide()  
         
     def _reset(self):
-        self.newDialog.filePathErrorLabel.setText("")             
-         
+        self.newDialog.filePathErrorLabel.setText("")    
+
+        
+class VectorLayerController:
+    
+    def __init__(self, csvVectorLayer, csvDataSourceHandler):        
+        self.csvVectorLayer = weakref.ref(csvVectorLayer)
+        self.csvDataSourceHandler = csvDataSourceHandler
+            
+    def syncFeatures(self, features, vectorLayerDescriptor):
+        try:
+            self.csvDataSourceHandler.syncFeaturesWithCsv(vectorLayerDescriptor, features)
+            return True
+        except:
+            #ToDo Changes couldn't be saved
+            return False

@@ -7,14 +7,34 @@ import csv
 import os
 
 from qgis.core import QgsVectorLayer, QgsFeature
-from geocsv_model import *
 from geocsv_exception import *
+from geocsv_model import CsvVectorLayer, GeoCsvAttributeType, PointCsvVectorLayerDescriptor, WktCsvVectorLayerDescriptor, GeoCSVAttribute
+import geocsv_controller
+
+class GeoCsvVectorLayerFactory:
+     
+    @staticmethod
+    def createVectorLayer(dataSourceHandler, vectorLayerDescriptor):                
+        ':type dataSourceHandler:GeoCsvDataSourceHandler'
+        ':type vectorLayerDescriptor: CsvVectorLayerDescriptor'             
+        # create VectorLayer using memory provider
+        vectorLayer = QgsVectorLayer(vectorLayerDescriptor.geometryType, vectorLayerDescriptor.layerName, "memory")
+        # : :type dataProvider: QgsVectorDataProvider
+        dataProvider = vectorLayer.dataProvider() 
+        dataProvider.addAttributes(vectorLayerDescriptor.getAttributesAsQgsFields())
+        vectorLayer.updateFields()
+        dataProvider.addFeatures(dataSourceHandler.createFeaturesFromCsv(vectorLayerDescriptor))                
+        vectorLayer.updateExtents()
+        vectorLayer.setCustomProperty("csv_filepath", dataSourceHandler.getPathToCsvFile())
+        csvVectorLayer = CsvVectorLayer(vectorLayer, vectorLayerDescriptor) 
+        vectorLayerController = geocsv_controller.VectorLayerController(csvVectorLayer, dataSourceHandler)
+        csvVectorLayer.initController(vectorLayerController)
+        return csvVectorLayer 
 
 class CsvExcelSemicolonDialect(csv.excel):
     delimiter = ';'
 
-class GeoCsvDataSourceHandler:
-    
+class GeoCsvDataSourceHandler:    
     def __init__(self, pathToCsvFile):
         csv.register_dialect('excel-semicolon', CsvExcelSemicolonDialect)
         try:
@@ -337,28 +357,5 @@ class GeoCsvFileContainer:
             self.pathToPrj = self.rootPath + '.prj'    
             
     def _createFileName(self): 
-        self.fileName = os.path.basename(self.rootPath)
-        
-
-class GeoCsvVectorLayerFactory:
-     
-    @staticmethod
-    def createVectorLayer(dataSourceHandler, vectorLayerDescriptor=None):                
-        ':type dataSourceHandler:GeoCsvDataSourceHandler'
-        ':type vectorLayerDescriptor: CsvVectorLayerDescriptor'
-        if not vectorLayerDescriptor:
-            try:
-                vectorLayerDescriptor = dataSourceHandler.createCsvVectorDescriptor()
-            except:
-                raise                
-        # create VectorLayer using memory provider
-        vectorLayer = QgsVectorLayer(vectorLayerDescriptor.geometryType, vectorLayerDescriptor.layerName, "memory")
-        # : :type dataProvider: QgsVectorDataProvider
-        dataProvider = vectorLayer.dataProvider() 
-        dataProvider.addAttributes(vectorLayerDescriptor.getAttributesAsQgsFields())
-        vectorLayer.updateFields()
-        dataProvider.addFeatures(dataSourceHandler.createFeaturesFromCsv(vectorLayerDescriptor))                
-        vectorLayer.updateExtents()
-        vectorLayer.setCustomProperty("csv_filepath", dataSourceHandler.getPathToCsvFile())
-        return CsvVectorLayer(dataSourceHandler, vectorLayer, vectorLayerDescriptor)        
+        self.fileName = os.path.basename(self.rootPath)              
         
