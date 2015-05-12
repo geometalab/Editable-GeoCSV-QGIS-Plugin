@@ -10,9 +10,8 @@ from PyQt4.QtCore import QVariant
 from geocsv_exception import GeoCsvUnknownGeometryTypeException,GeoCsvUnknownAttributeException
 
 class GeometryType:
-    # Qgs memory provider currently only support Point, LineString and Polygon
-    # http://docs.qgis.org/testing/en/docs/pyqgis_developer_cookbook/vector.html
-    # search for memory provider
+    # Currently, QGis can only determine Point, LineString and Polygon geometry types
+    # http://qgis.org/api/group__core.html#ga09947eb19394302eeeed44d3e81dd74b
     point = "Point"
     lineString = "LineString"
     polygon = "Polygon"    
@@ -67,7 +66,11 @@ class CsvVectorLayerDescriptor:
         self.geometryType = None
         self.descriptorType = None
         self.layerName = None
-        self.fileContainer = None        
+        self.fileContainer = None
+        self.crs = None 
+        
+    def addCRS(self, crs):
+        self.crs = crs
      
     def updateGeoAttributes(self, vectorLayer, feature):
         raise NotImplementedError("must be implemented")

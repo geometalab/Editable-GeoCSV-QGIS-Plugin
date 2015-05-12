@@ -6,7 +6,7 @@ Created on 04.05.2015
 import csv
 import os
 
-from qgis.core import QgsVectorLayer, QgsFeature
+from qgis.core import QgsVectorLayer, QgsFeature, QgsCoordinateReferenceSystem
 from geocsv_exception import *
 from geocsv_model import CsvVectorLayer, GeoCsvAttributeType, PointCsvVectorLayerDescriptor, WktCsvVectorLayerDescriptor, GeoCSVAttribute
 import geocsv_controller
@@ -18,10 +18,13 @@ class GeoCsvVectorLayerFactory:
         ':type dataSourceHandler:GeoCsvDataSourceHandler'
         ':type vectorLayerDescriptor: CsvVectorLayerDescriptor'             
         # create VectorLayer using memory provider
-        vectorLayer = QgsVectorLayer(vectorLayerDescriptor.geometryType, vectorLayerDescriptor.layerName, "memory")
-        # : :type dataProvider: QgsVectorDataProvider
+        _path = vectorLayerDescriptor.geometryType
+        if vectorLayerDescriptor.crs:
+            _path += "?crs="+vectorLayerDescriptor.crs.toWkt()            
+        vectorLayer = QgsVectorLayer(_path, vectorLayerDescriptor.layerName, "memory")
+        # : :type dataProvider: QgsVectorDataProvider                
         dataProvider = vectorLayer.dataProvider() 
-        dataProvider.addAttributes(vectorLayerDescriptor.getAttributesAsQgsFields())
+        dataProvider.addAttributes(vectorLayerDescriptor.getAttributesAsQgsFields())        
         vectorLayer.updateFields()
         dataProvider.addFeatures(dataSourceHandler.createFeaturesFromCsv(vectorLayerDescriptor))                
         vectorLayer.updateExtents()
@@ -29,6 +32,7 @@ class GeoCsvVectorLayerFactory:
         csvVectorLayer = CsvVectorLayer(vectorLayer, vectorLayerDescriptor) 
         vectorLayerController = geocsv_controller.VectorLayerController(csvVectorLayer, dataSourceHandler)
         csvVectorLayer.initController(vectorLayerController)
+        dataSourceHandler.updatePrjFile(vectorLayer.crs().toWkt())
         return csvVectorLayer 
 
 class CsvExcelSemicolonDialect(csv.excel):
@@ -227,6 +231,10 @@ class GeoCsvDataSourceHandler:
         except:
             raise FileIOException()
 
+
+    def updatePrjFile(self, crsWkt):
+        with open(self._fileContainer.constructPrjPath(), 'w+') as prjfile:
+            prjfile.write(unicode(crsWkt+"\n").encode("utf-8"))
               
     def _extractGeoCsvAttributeTypesFromCsvt(self):
         if not self.hasCsvt():
@@ -262,6 +270,16 @@ class GeoCsvDataSourceHandler:
             attributeTypes.append(GeoCsvAttributeType(attributeType))                        
         return attributeTypes
     
+    def _extractCrsFromPrj(self):
+        crs = None
+        if self._fileContainer.hasPrj():
+            with open(self._fileContainer.pathToPrj) as prjfile:
+                crsWkt = prjfile.readline()
+                _crs =  QgsCoordinateReferenceSystem()
+                if _crs.createFromWkt(crsWkt):
+                    crs = _crs
+        return crs
+        
     
     def _createGeoCSVAttributes(self, attributeTypes):
         attributes = []
@@ -287,7 +305,10 @@ class GeoCsvDataSourceHandler:
         try:            
             descriptor.configureAndValidateWithSampleRow(firstDataRow)
         except GeoCsvUnknownGeometryTypeException:
-            raise        
+            raise
+        crs = self._extractCrsFromPrj()        
+        if crs:            
+            descriptor.addCRS(crs)        
         return descriptor
 
 
@@ -345,6 +366,9 @@ class GeoCsvFileContainer:
     
     def constructCsvtPath(self):
         return self.rootPath +'.csvt'
+    
+    def constructPrjPath(self):
+        return self.rootPath +'.prj'
     
     def _createPathToCSVT(self):
         self.pathToCsvtFile = ""

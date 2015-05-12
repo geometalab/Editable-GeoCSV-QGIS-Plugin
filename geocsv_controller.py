@@ -41,7 +41,7 @@ class GeoCsvNewController:
         if result:
             if self.dataSourceHandler and self.vectorDescriptor:                                
                 csvVectorLayer = GeoCsvVectorLayerFactory.createVectorLayer(self.dataSourceHandler, self.vectorDescriptor)                                            
-                QgsMapLayerRegistry.instance().addMapLayer(csvVectorLayer.vectorLayer)
+                QgsMapLayerRegistry.instance().addMapLayer(csvVectorLayer.vectorLayer)                
                 vectorLayers.append(csvVectorLayer)         
             
     def initConnections(self):
