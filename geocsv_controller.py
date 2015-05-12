@@ -11,7 +11,7 @@ from qgis.core import QgsMapLayerRegistry
 
 from PyQt4.QtGui import QFileDialog
 
-from geocsv_ui import GeoCsvDialogNew
+from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict, QtHelper
 from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory
 from geocsv_model import CsvVectorLayerDescriptor
 
@@ -171,11 +171,49 @@ class VectorLayerController:
             
     def syncFeatures(self, features, vectorLayerDescriptor):
         try:
-            self.csvDataSourceHandler.syncFeaturesWithCsv(vectorLayerDescriptor, features)
+            self.csvDataSourceHandler.syncFeaturesWithCsv(vectorLayerDescriptor, features)            
             return True
         except:
-            #ToDo Changes couldn't be saved
+            #ToDo Changes couldn't be saved            
+            VectorLayerSaveConflictController(self.csvVectorLayer(), self.csvDataSourceHandler).handleConflict(features)
             return False
-        
+                        
     def updateLayerCrs(self, crsWkt):
         self.csvDataSourceHandler.updatePrjFile(crsWkt)
+        
+class VectorLayerSaveConflictController:
+    def __init__(self, csvVectorLayer, csvDataSourceHandler):        
+        self.csvVectorLayer = weakref.ref(csvVectorLayer)
+        self.csvDataSourceHandler = csvDataSourceHandler
+        self.conflictDialog = None
+    
+    def handleConflict(self, features):        
+        self._initConflictDialog()
+        self.features = features
+        self.conflictDialog.show()
+        self.conflictDialog.exec_()
+    
+    def _initConflictDialog(self):
+        self.conflictDialog = GeoCsvDialogConflict() 
+        self.conflictDialog.cancelButton.clicked.connect(self._onConflictCancelButton)
+        self.conflictDialog.retryButton.clicked.connect(self._onConflictRetryButton)
+        self.conflictDialog.saveAsButton.clicked.connect(self._onConflictSaveAsButton)   
+        
+    def _onConflictCancelButton(self):
+        self.conflictDialog.accept()
+    
+    def _onConflictRetryButton(self):
+        self.conflictDialog.accept()
+        try:
+            self.csvDataSourceHandler.syncFeaturesWithCsv(self.csvVectorLayer().vectorLayerDescriptor, self.features)
+        except FileIOException:
+            self.handleConflict(self.features)
+    
+    def _onConflictSaveAsButton(self):        
+        filePath = QFileDialog.getSaveFileName(self.conflictDialog, QtHelper.tr("Save File"),"",QtHelper.tr("Files (*.csv)"));
+        if filePath:
+            self.conflictDialog.accept()
+            self.csvDataSourceHandler.syncFeaturesWithCsv(self.csvVectorLayer().vectorLayerDescriptor, self.features, filePath)
+            
+        
+        

@@ -183,10 +183,11 @@ class GeoCsvDataSourceHandler:
                         features.append(feature)
         return features
     
-    def syncFeaturesWithCsv(self, vectorLayerDescriptor, features):
+    def syncFeaturesWithCsv(self, vectorLayerDescriptor, features, alternativeSavePath=None):
         ':type vectorLayerDescriptor:CsvVectorLayerDescriptor'
         try:
-            with open(self._fileContainer.pathToCsvFile, 'w') as csvfile:
+            _path = self._fileContainer.pathToCsvFile if not alternativeSavePath else alternativeSavePath
+            with open(_path, 'w+') as csvfile:                
                 writer = csv.writer(csvfile, dialect=self._csvDialect)
                 attributeNames = [attribute.name for attribute in vectorLayerDescriptor.attributes]
                 # write header row
