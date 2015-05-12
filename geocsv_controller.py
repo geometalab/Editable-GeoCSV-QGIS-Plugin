@@ -176,3 +176,6 @@ class VectorLayerController:
         except:
             #ToDo Changes couldn't be saved
             return False
+        
+    def updateLayerCrs(self, crsWkt):
+        self.csvDataSourceHandler.updatePrjFile(crsWkt)

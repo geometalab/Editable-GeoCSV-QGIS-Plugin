@@ -173,6 +173,7 @@ class CsvVectorLayer():
         vectorLayer.committedFeaturesAdded.connect(self.featuresAdded)
         vectorLayer.committedFeaturesRemoved.connect(self.featuresRemoved)
         vectorLayer.geometryChanged.connect(self.geometryChanged)
+        vectorLayer.layerCrsChanged.connect(self.layerCrsDidChange)
         
         
     def editingDidStart(self):
@@ -195,3 +196,6 @@ class CsvVectorLayer():
         feature = self.vectorLayer.getFeatures(QgsFeatureRequest(featureId)).next()
         self.vectorLayerDescriptor.updateGeoAttributes(self.vectorLayer, feature)
         self.dirty = True
+    
+    def layerCrsDidChange(self):
+        self.vectorLayerController.updateLayerCrs(self.vectorLayer.crs().toWkt())

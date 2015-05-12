@@ -324,7 +324,8 @@ class GeoCsvDataSourceHandler:
             raise GeoCsvMultipleGeoAttributeException()
         if (len(eastings) == 1 and len(northings) == 0) or (len(eastings) == 0 and len(northings) == 1):
             raise GeoCsvMalformedGeoAttributeException()
-        
+        if (len(eastings) == 1 and len(wkts) == 1) or (len(northings) == 1 and len(wkts) == 1):
+            raise GeoCsvMultipleGeoAttributeException()        
         if len(eastings) == 1 and len(northings) == 1:
             descriptor = PointCsvVectorLayerDescriptor(attributes, eastings[0], northings[0])
         elif len(wkts) == 1:
