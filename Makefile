@@ -25,13 +25,12 @@
 
 #Add iso code for any locales you want to support here (space separated)
 # default is no locales
-# LOCALES = af
-LOCALES =
+LOCALES = geocsv_en geocsv_de
 
 # If locales are enabled, set the name of the lrelease binary on your system. If
 # you have trouble compiling the translations, you may have to specify the full path to
 # lrelease
-#LRELEASE = lrelease
+LRELEASE = lrelease
 #LRELEASE = lrelease-qt4
 
 
@@ -45,7 +44,7 @@ SOURCES = \
 	geocsv_service.py \
 	geocsv_ui.py 			
 
-PLUGINNAME = geocsveditor
+PLUGINNAME = geocsv
 
 PY_FILES = \
 	geocsv_controller.py \
@@ -53,10 +52,11 @@ PY_FILES = \
 	geocsv_model.py \
 	geocsv_plugin.py \
 	geocsv_service.py \
-	geocsv_ui.py \
-	__init__.py
+	geocsv_ui.py
 
-UI_FILES = geocsv_dialog_new.ui
+UI_FILES = \
+    geocsv_dialog_new.ui \
+    geocsv_dialog_conflict.ui
 
 EXTRAS = icon.png metadata.txt
 
@@ -105,7 +105,8 @@ test: compile transcompile
 	@echo "e.g. source run-env-linux.sh <path to qgis install>; make test"
 	@echo "----------------------"
 
-deploy: compile doc transcompile
+#deploy: compile doc transcompile
+deploy: compile transcompile
 	@echo
 	@echo "------------------------------------------"
 	@echo "Deploying plugin to your .qgis2 directory."
@@ -184,7 +185,7 @@ transcompile:
 	@echo "Compiled translation files to .qm files."
 	@echo "----------------------------------------"
 	@chmod +x scripts/compile-strings.sh
-	@scripts/compile-strings.sh $(LRELEASE) $(LOCALES)
+	@scripts/compile-strings.sh $(LOCALES)
 
 transclean:
 	@echo
