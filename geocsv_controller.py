@@ -32,18 +32,23 @@ class GeoCsvNewController:
     def __init__(self):                
         self.geometryFieldUpdate = False
         
-    def createCsvVectorLayer(self, vectorLayers):  
+    def createCsvVectorLayer(self, vectorLayers, qgsVectorLayer=None):         
         self.dataSourceHandler = None
         self.vectorDescriptor = None
         self.newDialog = GeoCsvDialogNew()        
         self.initConnections()
-        self.initVisibility()                      
+        self.initVisibility()
+        if qgsVectorLayer:
+            csvPath = qgsVectorLayer.customProperty('csv_filepath')
+            if csvPath:
+                self.newDialog.filePath.setText(csvPath)                     
         self.newDialog.show()
         result = self.newDialog.exec_()
         if result:
             if self.dataSourceHandler and self.vectorDescriptor:                                
-                csvVectorLayer = GeoCsvVectorLayerFactory.createVectorLayer(self.dataSourceHandler, self.vectorDescriptor)                                            
-                QgsMapLayerRegistry.instance().addMapLayer(csvVectorLayer.vectorLayer)                
+                csvVectorLayer = GeoCsvVectorLayerFactory.createCsvVectorLayer(self.dataSourceHandler, self.vectorDescriptor, qgsVectorLayer)
+                self.dataSourceHandler.updatePrjFile(csvVectorLayer.qgsVectorLayer.crs().toWkt())                                            
+                QgsMapLayerRegistry.instance().addMapLayer(csvVectorLayer.qgsVectorLayer)                
                 vectorLayers.append(csvVectorLayer)         
             
     def initConnections(self):
@@ -88,7 +93,7 @@ class GeoCsvNewController:
             self.vectorDescriptor = self.dataSourceHandler.createCsvVectorDescriptorFromCsvt()
             self.newDialog.filePathErrorLabel.setText("")                
         except GeoCsvUnknownAttributeException as e:
-            self.newDialog.filePathErrorLabel.setText("unknown csvt attribute {} at index {}".format(e.attributeName, e.attributeIndex))            
+            self.newDialog.filePathErrorLabel.setText("unknown csvt attribute: {}".format(e.attributeName))            
         except CsvCsvtMissmatchException:
             self.newDialog.filePathErrorLabel.setText("csv<->csvt missmatch")        
         except GeoCsvUnknownGeometryTypeException:
@@ -164,7 +169,30 @@ class GeoCsvNewController:
     def _reset(self):
         self.newDialog.filePathErrorLabel.setText("")    
 
-        
+
+class GeoCsvReconnectController:
+    _instance = None
+    
+    @classmethod
+    def getInstance(cls):
+        if not cls._instance:
+            cls._instance = GeoCsvReconnectController()
+        return cls._instance
+    
+    def reconnectCsvVectorLayers(self, csvVectorLayers):
+        layers = QgsMapLayerRegistry.instance().mapLayers()
+        for qgsLayer in layers.itervalues():
+            csvFilePath = qgsLayer.customProperty('csv_filepath','') 
+            if csvFilePath:                
+                try:        
+                    dataSourceHandler = GeoCsvDataSourceHandler(csvFilePath)
+                    vectorLayerDescriptor = dataSourceHandler.createCsvVectorDescriptorFromCsvt()
+                    csvVectorLayers.append(GeoCsvVectorLayerFactory.createCsvVectorLayer(dataSourceHandler, vectorLayerDescriptor, qgsLayer))                                                    
+                except:                  
+                    GeoCsvNewController.getInstance().createCsvVectorLayer(csvVectorLayers, qgsLayer)
+                                
+                
+                        
 class VectorLayerController:
     
     def __init__(self, csvVectorLayer, csvDataSourceHandler):        
@@ -191,7 +219,7 @@ class VectorLayerSaveConflictController:
     
     def handleConflict(self):        
         self._initConflictDialog()
-        self.features = self.csvVectorLayer().vectorLayer.getFeatures()
+        self.features = self.csvVectorLayer().qgsVectorLayer.getFeatures()
         self.conflictDialog.show()
         self.conflictDialog.exec_()
     
@@ -219,7 +247,6 @@ class VectorLayerSaveConflictController:
                 self.csvDataSourceHandler.moveDataSourcesToPath(filePath)
                 self.csvDataSourceHandler.syncFeaturesWithCsv(self.csvVectorLayer().vectorLayerDescriptor, self.features, filePath)
             except:
-                QMessageBox.information(None, "Invalid path", "An error occured while trying to save file on new location. Please try again.")
-            
+                QMessageBox.information(None, "Invalid path", "An error occured while trying to save file on new location. Please try again.")            
         
         

@@ -27,7 +27,7 @@ from PyQt4.QtGui import QIcon, QAction
 # Initialize Qt resources from file resources.py
 import resources_rc
 
-from geocsv_controller import GeoCsvNewController
+from geocsv_controller import GeoCsvNewController, GeoCsvReconnectController
 
 # import sys;
 # sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
@@ -62,9 +62,13 @@ class EditableGeoCsv:
 
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
-                
-        self.vectorLayers = []        
-                
+                        
+        self.vectorLayers = []  
+        
+        #if the project file is successfully read, reconnect all CsvVectorLayers with datasource
+        iface.projectRead.connect(lambda: GeoCsvReconnectController.getInstance().reconnectCsvVectorLayers(self.vectorLayers))
+        
+                                      
         # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&GeoCSV Editor')

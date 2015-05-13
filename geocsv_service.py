@@ -15,26 +15,27 @@ import geocsv_controller
 class GeoCsvVectorLayerFactory:
      
     @staticmethod
-    def createVectorLayer(dataSourceHandler, vectorLayerDescriptor):                
+    def createCsvVectorLayer(dataSourceHandler, vectorLayerDescriptor, qgsVectorLayer=None):                
         ':type dataSourceHandler:GeoCsvDataSourceHandler'
-        ':type vectorLayerDescriptor: CsvVectorLayerDescriptor'             
-        # create VectorLayer using memory provider
-        _path = vectorLayerDescriptor.geometryType
-        if vectorLayerDescriptor.crs:
-            _path += "?crs="+vectorLayerDescriptor.crs.toWkt()            
-        vectorLayer = QgsVectorLayer(_path, vectorLayerDescriptor.layerName, "memory")
+        ':type vectorLayerDescriptor: CsvVectorLayerDescriptor'                     
+        if not qgsVectorLayer:
+            # create VectorLayer using memory provider
+            _path = vectorLayerDescriptor.geometryType
+            if vectorLayerDescriptor.crs:
+                _path += "?crs="+vectorLayerDescriptor.crs.toWkt()            
+            qgsVectorLayer = QgsVectorLayer(_path, vectorLayerDescriptor.layerName, "memory")
         # : :type dataProvider: QgsVectorDataProvider                
-        dataProvider = vectorLayer.dataProvider() 
+        dataProvider = qgsVectorLayer.dataProvider() 
         dataProvider.addAttributes(vectorLayerDescriptor.getAttributesAsQgsFields())        
-        vectorLayer.updateFields()
+        qgsVectorLayer.updateFields()
         dataProvider.addFeatures(dataSourceHandler.createFeaturesFromCsv(vectorLayerDescriptor))                
-        vectorLayer.updateExtents()
-        vectorLayer.setCustomProperty("csv_filepath", dataSourceHandler.getPathToCsvFile())
-        csvVectorLayer = CsvVectorLayer(vectorLayer, vectorLayerDescriptor) 
+        qgsVectorLayer.updateExtents()
+        qgsVectorLayer.setCustomProperty("csv_filepath", dataSourceHandler.getPathToCsvFile())
+        csvVectorLayer = CsvVectorLayer(qgsVectorLayer, vectorLayerDescriptor) 
         vectorLayerController = geocsv_controller.VectorLayerController(csvVectorLayer, dataSourceHandler)
-        csvVectorLayer.initController(vectorLayerController)
-        dataSourceHandler.updatePrjFile(vectorLayer.crs().toWkt())
+        csvVectorLayer.initController(vectorLayerController)        
         return csvVectorLayer 
+        
 
 class CsvExcelSemicolonDialect(csv.excel):
     delimiter = ';'

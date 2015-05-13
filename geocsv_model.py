@@ -133,7 +133,7 @@ class CsvVectorLayerDescriptor:
         return fields
             
     def changeAttributeValue(self, vectorLayer, feature, attributeName, newValue):
-        ':type vectorLayer: QgsVectorLayer'
+        ':type qgsVectorLayer: QgsVectorLayer'
         ':type feature: QgsFeature'
         vectorLayer.changeAttributeValue(feature.id(), feature.fieldNameIndex(attributeName), newValue)
         
@@ -162,7 +162,7 @@ class WktCsvVectorLayerDescriptor(CsvVectorLayerDescriptor):
         return QgsGeometry.fromWkt(row[self.wktIndex])
              
     def updateGeoAttributes(self, vectorLayer, feature):
-        ':type vectorLayer: QgsVectorLayer'
+        ':type qgsVectorLayer: QgsVectorLayer'
         ':type feature: QgsFeature'        
         self.changeAttributeValue(vectorLayer, feature, self.attributes[self.wktIndex].name, feature.geometry().exportToWkt())
         
@@ -183,7 +183,7 @@ class PointCsvVectorLayerDescriptor(CsvVectorLayerDescriptor):
         return geometry
         
     def updateGeoAttributes(self, vectorLayer, feature):
-        ':type vectorLayer: QgsVectorLayer'
+        ':type qgsVectorLayer: QgsVectorLayer'
         ':type feature: QgsFeature'
         point = feature.geometry().asPoint()
         self.changeAttributeValue(vectorLayer, feature, self.attributes[self.eastingIndex].name, point.x())
@@ -198,11 +198,11 @@ class PointCsvVectorLayerDescriptor(CsvVectorLayerDescriptor):
         
 
 class CsvVectorLayer():    
-    def __init__(self, vectorLayer, vectorLayerDescriptor):           
-        ':type vectorLayer: QgsVectorLayer'
+    def __init__(self, qgsVectorLayer, vectorLayerDescriptor):           
+        ':type qgsVectorLayer: QgsVectorLayer'
         ':type vectorLayerDescriptor CsvVectorLayerDescriptor'        
-        self.initConnections(vectorLayer)                
-        self.vectorLayer = vectorLayer        
+        self.initConnections(qgsVectorLayer)                
+        self.qgsVectorLayer = qgsVectorLayer        
         self.vectorLayerDescriptor = vectorLayerDescriptor         
         self.dirty = False
         
@@ -210,14 +210,14 @@ class CsvVectorLayer():
         ':type vectorLayerController VectorLayerController'
         self.vectorLayerController = vectorLayerController
                                   
-    def initConnections(self, vectorLayer):
-        ':type vectorLayer: QgsVectorLayer'        
-        vectorLayer.editingStarted.connect(self.editingDidStart)
-        vectorLayer.editingStopped.connect(self.editingDidStop)        
-        vectorLayer.committedFeaturesAdded.connect(self.featuresAdded)
-        vectorLayer.committedFeaturesRemoved.connect(self.featuresRemoved)
-        vectorLayer.geometryChanged.connect(self.geometryChanged)
-        vectorLayer.layerCrsChanged.connect(self.layerCrsDidChange)
+    def initConnections(self, qgsVectorLayer):
+        ':type qgsVectorLayer: QgsVectorLayer'        
+        qgsVectorLayer.editingStarted.connect(self.editingDidStart)
+        qgsVectorLayer.editingStopped.connect(self.editingDidStop)        
+        qgsVectorLayer.committedFeaturesAdded.connect(self.featuresAdded)
+        qgsVectorLayer.committedFeaturesRemoved.connect(self.featuresRemoved)
+        qgsVectorLayer.geometryChanged.connect(self.geometryChanged)
+        qgsVectorLayer.layerCrsChanged.connect(self.layerCrsDidChange)
         
         
     def editingDidStart(self):
@@ -225,7 +225,7 @@ class CsvVectorLayer():
     
     def editingDidStop(self):
         if self.dirty:
-            features = self.vectorLayer.getFeatures()
+            features = self.qgsVectorLayer.getFeatures()
             if self.vectorLayerController.syncFeatures(features, self.vectorLayerDescriptor):
                 self.dirty = False
                         
@@ -237,9 +237,9 @@ class CsvVectorLayer():
         self.dirty = True
     
     def geometryChanged(self, featureId, geometry):
-        feature = self.vectorLayer.getFeatures(QgsFeatureRequest(featureId)).next()
-        self.vectorLayerDescriptor.updateGeoAttributes(self.vectorLayer, feature)
+        feature = self.qgsVectorLayer.getFeatures(QgsFeatureRequest(featureId)).next()
+        self.vectorLayerDescriptor.updateGeoAttributes(self.qgsVectorLayer, feature)
         self.dirty = True
     
     def layerCrsDidChange(self):
-        self.vectorLayerController.updateLayerCrs(self.vectorLayer.crs().toWkt())
+        self.vectorLayerController.updateLayerCrs(self.qgsVectorLayer.crs().toWkt())
