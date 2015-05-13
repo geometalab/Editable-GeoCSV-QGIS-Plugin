@@ -1,8 +1,24 @@
-'''
-Created on 05.05.2015
+# -*- coding: utf-8 -*-
+"""
+/***************************************************************************
+Editable GeoCSV
+A QGIS plugin
+                              -------------------
+begin                : 2015-04-29        
+copyright            : (C) 2015 by geometalab
+email                : geometalab@gmail.com
+ ***************************************************************************/
 
-@author: faustos
-'''
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
+
 import weakref
 
 from qgis.core import QgsMapLayerRegistry
@@ -240,7 +256,7 @@ class VectorLayerSaveConflictController:
             self.handleConflict()
     
     def _onConflictSaveAsButton(self):        
-        filePath = QFileDialog.getSaveFileName(self.conflictDialog, QtHelper.tr("Save File"), "", QtHelper.tr("Files (*.csv)"));
+        filePath = QFileDialog.getSaveFileName(self.conflictDialog, QtHelper.translate("Save File"), "", QtHelper.translate("Files (*.csv)"));
         if filePath:
             self.conflictDialog.accept()
             try:

@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- geocsveditorDialog
-                                 A QGIS plugin
- Editable CSV Vector Layer
-                             -------------------
-        begin                : 2015-04-29
-        git sha              : $Format:%H$
-        copyright            : (C) 2015 by geometalab
-        email                : geometalab@gmail.com
+Editable GeoCSV
+A QGIS plugin
+                              -------------------
+begin                : 2015-04-29        
+copyright            : (C) 2015 by geometalab
+email                : geometalab@gmail.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -34,28 +32,16 @@ FORM_CLASS_CONFLICT, _ = uic.loadUiType(os.path.join(
 
 
 class GeoCsvDialogNew(QtGui.QDialog, FORM_CLASS_NEW):
-    def __init__(self, parent=None):
-        """Constructor."""
-        super(GeoCsvDialogNew, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
+    def __init__(self, parent=None):        
+        super(GeoCsvDialogNew, self).__init__(parent)        
         self.setupUi(self)
         
 class GeoCsvDialogConflict(QtGui.QDialog, FORM_CLASS_CONFLICT):
-    def __init__(self, parent=None):
-        """Constructor."""
-        super(GeoCsvDialogConflict, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
+    def __init__(self, parent=None):        
+        super(GeoCsvDialogConflict, self).__init__(parent)        
         self.setupUi(self)  
         
 class QtHelper:
     @staticmethod        
-    def tr(message):
+    def translate(message):
         return QCoreApplication.translate('geocsveditor', message)             
