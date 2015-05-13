@@ -203,7 +203,7 @@ class GeoCsvReconnectController:
                     dataSourceHandler = GeoCsvDataSourceHandler(csvFilePath)
                     vectorLayerDescriptor = dataSourceHandler.createCsvVectorDescriptorFromCsvt()
                     csvVectorLayer = GeoCsvVectorLayerFactory.createCsvVectorLayer(dataSourceHandler, vectorLayerDescriptor, qgsLayer)
-                    vectorLayerController = VectorLayerController(csvVectorLayer, self.dataSourceHandler)
+                    vectorLayerController = VectorLayerController(csvVectorLayer, dataSourceHandler)
                     csvVectorLayer.initController(vectorLayerController)                    
                     csvVectorLayers.append(csvVectorLayer)                                                    
                 except:                  
