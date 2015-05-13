@@ -5,6 +5,7 @@ Created on 04.05.2015
 '''
 import csv
 import os
+import shutil
 
 from qgis.core import QgsVectorLayer, QgsFeature, QgsCoordinateReferenceSystem
 from geocsv_exception import *
@@ -239,7 +240,13 @@ class GeoCsvDataSourceHandler:
     def updatePrjFile(self, crsWkt):
         with open(self._fileContainer.constructPrjPath(), 'w+') as prjfile:
             prjfile.write(unicode(crsWkt+"\n").encode("utf-8"))
-              
+            
+    def moveDataSourcesToPath(self, newPath):
+        try:
+            self._fileContainer.moveToNewPath(newPath)
+        except UnknownFileFormatException:
+            raise 
+                      
     def _extractGeoCsvAttributeTypesFromCsvt(self):
         if not self.hasCsvt():
             raise MissingCsvtException()             
@@ -347,6 +354,9 @@ class GeoCsvDataSourceHandler:
 class GeoCsvFileContainer:
             
     def __init__(self, pathToCsvFile):
+        self._initWithPath(pathToCsvFile)
+        
+    def _initWithPath(self, pathToCsvFile):
         if not os.path.isfile(pathToCsvFile):
             raise FileNotFoundException()
         self.rootPath, fileExtension = os.path.splitext(pathToCsvFile)
@@ -359,7 +369,7 @@ class GeoCsvFileContainer:
             pass
         else:
             raise UnknownFileFormatException()
-    
+                
     def hasCsvt(self):
         return self.pathToCsvtFile != ''
     
@@ -372,6 +382,18 @@ class GeoCsvFileContainer:
     def constructPrjPath(self):
         return self.rootPath +'.prj'
     
+    def moveToNewPath(self, newPath):
+        newRootPath, newFileExtension = os.path.splitext(newPath)
+        if newFileExtension == '.csv':
+            shutil.copy(self.pathToCsvFile, newPath)
+            if self.hasCsvt():
+                shutil.copy(self.pathToCsvtFile, newRootPath+'.csvt')
+            if self.hasPrj():
+                shutil.copy(self.pathToPrj, newRootPath+'.prj')
+            self._initWithPath(newPath)                
+        else:
+            raise UnknownFileFormatException()
+                        
     def _createPathToCSVT(self):
         self.pathToCsvtFile = ""
         if os.path.exists(self.rootPath + '.csvt'):

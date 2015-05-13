@@ -16,6 +16,8 @@ from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory
 from geocsv_model import CsvVectorLayerDescriptor
 
 from geocsv_exception import *
+from copy import copy
+from PyQt4.Qt import QMessageBox
 
 class GeoCsvNewController:
 
@@ -169,13 +171,13 @@ class VectorLayerController:
         self.csvVectorLayer = weakref.ref(csvVectorLayer)
         self.csvDataSourceHandler = csvDataSourceHandler
             
-    def syncFeatures(self, features, vectorLayerDescriptor):
+    def syncFeatures(self, features, vectorLayerDescriptor):        
         try:
             self.csvDataSourceHandler.syncFeaturesWithCsv(vectorLayerDescriptor, features)            
             return True
         except:
             #ToDo Changes couldn't be saved            
-            VectorLayerSaveConflictController(self.csvVectorLayer(), self.csvDataSourceHandler).handleConflict(features)
+            VectorLayerSaveConflictController(self.csvVectorLayer(), self.csvDataSourceHandler).handleConflict()
             return False
                         
     def updateLayerCrs(self, crsWkt):
@@ -187,9 +189,9 @@ class VectorLayerSaveConflictController:
         self.csvDataSourceHandler = csvDataSourceHandler
         self.conflictDialog = None
     
-    def handleConflict(self, features):        
+    def handleConflict(self):        
         self._initConflictDialog()
-        self.features = features
+        self.features = self.csvVectorLayer().vectorLayer.getFeatures()
         self.conflictDialog.show()
         self.conflictDialog.exec_()
     
@@ -207,13 +209,17 @@ class VectorLayerSaveConflictController:
         try:
             self.csvDataSourceHandler.syncFeaturesWithCsv(self.csvVectorLayer().vectorLayerDescriptor, self.features)
         except FileIOException:
-            self.handleConflict(self.features)
+            self.handleConflict()
     
     def _onConflictSaveAsButton(self):        
         filePath = QFileDialog.getSaveFileName(self.conflictDialog, QtHelper.tr("Save File"),"",QtHelper.tr("Files (*.csv)"));
         if filePath:
             self.conflictDialog.accept()
-            self.csvDataSourceHandler.syncFeaturesWithCsv(self.csvVectorLayer().vectorLayerDescriptor, self.features, filePath)
+            try:
+                self.csvDataSourceHandler.moveDataSourcesToPath(filePath)
+                self.csvDataSourceHandler.syncFeaturesWithCsv(self.csvVectorLayer().vectorLayerDescriptor, self.features, filePath)
+            except:
+                QMessageBox.information(None, "Invalid path", "An error occured while trying to save file on new location. Please try again.")
             
         
         
