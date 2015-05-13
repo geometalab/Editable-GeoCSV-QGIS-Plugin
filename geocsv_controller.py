@@ -5,19 +5,16 @@ Created on 05.05.2015
 '''
 import weakref
 
-
 from qgis.core import QgsMapLayerRegistry
 
-
 from PyQt4.QtGui import QFileDialog
+from PyQt4.Qt import QMessageBox
 
 from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict, QtHelper
 from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory
 from geocsv_model import CsvVectorLayerDescriptor
-
 from geocsv_exception import *
-from copy import copy
-from PyQt4.Qt import QMessageBox
+
 
 class GeoCsvNewController:
 
@@ -47,6 +44,8 @@ class GeoCsvNewController:
         if result:
             if self.dataSourceHandler and self.vectorDescriptor:                                
                 csvVectorLayer = GeoCsvVectorLayerFactory.createCsvVectorLayer(self.dataSourceHandler, self.vectorDescriptor, qgsVectorLayer)
+                vectorLayerController = VectorLayerController(csvVectorLayer, self.dataSourceHandler)
+                csvVectorLayer.initController(vectorLayerController)
                 self.dataSourceHandler.updatePrjFile(csvVectorLayer.qgsVectorLayer.crs().toWkt())                                            
                 QgsMapLayerRegistry.instance().addMapLayer(csvVectorLayer.qgsVectorLayer)                
                 vectorLayers.append(csvVectorLayer)         
@@ -127,11 +126,11 @@ class GeoCsvNewController:
             if self.vectorDescriptor:
                 if self.vectorDescriptor.descriptorType == CsvVectorLayerDescriptor.pointDescriptorType:
                     self.newDialog.pointGeometryTypeRadio.setChecked(True)
-                    self.newDialog.eastingAttributeDropDown.setCurrentIndex(self.vectorDescriptor.eastingIndex+1)
-                    self.newDialog.northingAttributeDropDown.setCurrentIndex(self.vectorDescriptor.northingIndex+1)
+                    self.newDialog.eastingAttributeDropDown.setCurrentIndex(self.vectorDescriptor.eastingIndex + 1)
+                    self.newDialog.northingAttributeDropDown.setCurrentIndex(self.vectorDescriptor.northingIndex + 1)
                 else:
                     self.newDialog.wktGeometryTypeRadio.setChecked(True)
-                    self.newDialog.wktAttributeDropDown.setCurrentIndex(self.vectorDescriptor.wktIndex+1)
+                    self.newDialog.wktAttributeDropDown.setCurrentIndex(self.vectorDescriptor.wktIndex + 1)
             self.geometryFieldUpdate = False
                    
     def _manualGeometryDropdownChanged(self, index):
@@ -141,12 +140,12 @@ class GeoCsvNewController:
             if self.newDialog.pointGeometryTypeRadio.isChecked():
                 if not self.newDialog.eastingAttributeDropDown.currentIndex() == 0 and not self.newDialog.northingAttributeDropDown.currentIndex() == 0:
                     try:
-                        self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvPointVectorDescriptor(self.newDialog.eastingAttributeDropDown.currentIndex()-1, self.newDialog.northingAttributeDropDown.currentIndex()-1)
+                        self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvPointVectorDescriptor(self.newDialog.eastingAttributeDropDown.currentIndex() - 1, self.newDialog.northingAttributeDropDown.currentIndex() - 1)
                     except:
                         self.newDialog.filePathErrorLabel.setText("error in geometry selection")                             
             else:
                 try:
-                    self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvWktVectorDescriptor(self.newDialog.wktAttributeDropDown.currentIndex()-1)
+                    self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvWktVectorDescriptor(self.newDialog.wktAttributeDropDown.currentIndex() - 1)
                 except:
                     self.newDialog.filePathErrorLabel.setText("error in geometry selection") 
                 
@@ -182,17 +181,19 @@ class GeoCsvReconnectController:
     def reconnectCsvVectorLayers(self, csvVectorLayers):
         layers = QgsMapLayerRegistry.instance().mapLayers()
         for qgsLayer in layers.itervalues():
-            csvFilePath = qgsLayer.customProperty('csv_filepath','') 
+            csvFilePath = qgsLayer.customProperty('csv_filepath', '') 
             if csvFilePath:                
                 try:        
                     dataSourceHandler = GeoCsvDataSourceHandler(csvFilePath)
                     vectorLayerDescriptor = dataSourceHandler.createCsvVectorDescriptorFromCsvt()
-                    csvVectorLayers.append(GeoCsvVectorLayerFactory.createCsvVectorLayer(dataSourceHandler, vectorLayerDescriptor, qgsLayer))                                                    
+                    csvVectorLayer = GeoCsvVectorLayerFactory.createCsvVectorLayer(dataSourceHandler, vectorLayerDescriptor, qgsLayer)
+                    vectorLayerController = VectorLayerController(csvVectorLayer, self.dataSourceHandler)
+                    csvVectorLayer.initController(vectorLayerController)                    
+                    csvVectorLayers.append(csvVectorLayer)                                                    
                 except:                  
                     GeoCsvNewController.getInstance().createCsvVectorLayer(csvVectorLayers, qgsLayer)
                                 
-                
-                        
+                                        
 class VectorLayerController:
     
     def __init__(self, csvVectorLayer, csvDataSourceHandler):        
@@ -203,8 +204,7 @@ class VectorLayerController:
         try:
             self.csvDataSourceHandler.syncFeaturesWithCsv(vectorLayerDescriptor, features)            
             return True
-        except:
-            #ToDo Changes couldn't be saved            
+        except:                       
             VectorLayerSaveConflictController(self.csvVectorLayer(), self.csvDataSourceHandler).handleConflict()
             return False
                         
@@ -240,7 +240,7 @@ class VectorLayerSaveConflictController:
             self.handleConflict()
     
     def _onConflictSaveAsButton(self):        
-        filePath = QFileDialog.getSaveFileName(self.conflictDialog, QtHelper.tr("Save File"),"",QtHelper.tr("Files (*.csv)"));
+        filePath = QFileDialog.getSaveFileName(self.conflictDialog, QtHelper.tr("Save File"), "", QtHelper.tr("Files (*.csv)"));
         if filePath:
             self.conflictDialog.accept()
             try:

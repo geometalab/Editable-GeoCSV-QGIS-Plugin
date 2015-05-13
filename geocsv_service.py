@@ -10,7 +10,6 @@ import shutil
 from qgis.core import QgsVectorLayer, QgsFeature, QgsCoordinateReferenceSystem
 from geocsv_exception import *
 from geocsv_model import CsvVectorLayer, GeoCsvAttributeType, PointCsvVectorLayerDescriptor, WktCsvVectorLayerDescriptor, GeoCSVAttribute
-import geocsv_controller
 
 class GeoCsvVectorLayerFactory:
      
@@ -32,8 +31,7 @@ class GeoCsvVectorLayerFactory:
         qgsVectorLayer.updateExtents()
         qgsVectorLayer.setCustomProperty("csv_filepath", dataSourceHandler.getPathToCsvFile())
         csvVectorLayer = CsvVectorLayer(qgsVectorLayer, vectorLayerDescriptor) 
-        vectorLayerController = geocsv_controller.VectorLayerController(csvVectorLayer, dataSourceHandler)
-        csvVectorLayer.initController(vectorLayerController)        
+                
         return csvVectorLayer 
         
 

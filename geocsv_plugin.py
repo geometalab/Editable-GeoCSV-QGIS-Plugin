@@ -63,10 +63,10 @@ class EditableGeoCsv:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
                         
-        self.vectorLayers = []  
+        self.csvVectorLayers = []  
         
         #if the project file is successfully read, reconnect all CsvVectorLayers with datasource
-        iface.projectRead.connect(lambda: GeoCsvReconnectController.getInstance().reconnectCsvVectorLayers(self.vectorLayers))
+        iface.projectRead.connect(lambda: GeoCsvReconnectController.getInstance().reconnectCsvVectorLayers(self.csvVectorLayers))
         
                                       
         # Declare instance attributes
@@ -170,7 +170,7 @@ class EditableGeoCsv:
         self.add_action(
             icon_path,
             text=self.tr(u'GeoCSV Editor'),
-            callback=lambda f: GeoCsvNewController.getInstance().createCsvVectorLayer(self.vectorLayers),
+            callback=lambda f: GeoCsvNewController.getInstance().createCsvVectorLayer(self.csvVectorLayers),
             parent=self.iface.mainWindow())
                     
     def unload(self):
