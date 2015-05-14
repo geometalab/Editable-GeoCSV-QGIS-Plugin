@@ -40,8 +40,3 @@ class GeoCsvDialogConflict(QtGui.QDialog, FORM_CLASS_CONFLICT):
     def __init__(self, parent=None):        
         super(GeoCsvDialogConflict, self).__init__(parent)        
         self.setupUi(self)  
-        
-class QtHelper:
-    @staticmethod        
-    def translate(message):
-        return QCoreApplication.translate('geocsveditor', message)             

@@ -24,9 +24,9 @@ import weakref
 from qgis.core import QgsMapLayerRegistry
 
 from PyQt4.QtGui import QFileDialog
-from PyQt4.Qt import QMessageBox
+from PyQt4.Qt import QMessageBox, QApplication
 
-from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict, QtHelper
+from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict
 from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory
 from geocsv_model import CsvVectorLayerDescriptor
 from geocsv_exception import *
@@ -45,12 +45,14 @@ class GeoCsvNewController:
     def __init__(self):                
         self.geometryFieldUpdate = False
         
-    def createCsvVectorLayer(self, vectorLayers, qgsVectorLayer=None):         
+    def createCsvVectorLayer(self, vectorLayers, qgsVectorLayer=None, customTitle=None):         
         self.dataSourceHandler = None
         self.vectorDescriptor = None
         self.newDialog = GeoCsvDialogNew()        
         self.initConnections()
         self.initVisibility()
+        if customTitle:
+            self.newDialog.setWindowTitle(customTitle)
         if qgsVectorLayer:
             csvPath = qgsVectorLayer.customProperty('csv_filepath')
             if csvPath:
@@ -101,7 +103,7 @@ class GeoCsvNewController:
         try:        
             self.dataSourceHandler = GeoCsvDataSourceHandler(csvFilePath)            
         except InvalidDataSourceException:
-            self.newDialog.filePathErrorLabel.setText("invalid file path")            
+            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController','invalid file path'))            
             self._hideManualGeometryTypeWidget()   
         else:            
             self._createVectorDescriptorFromCsvt(csvFilePath)
@@ -111,20 +113,20 @@ class GeoCsvNewController:
             self.vectorDescriptor = self.dataSourceHandler.createCsvVectorDescriptorFromCsvt()
             self.newDialog.filePathErrorLabel.setText("")                
         except GeoCsvUnknownAttributeException as e:
-            self.newDialog.filePathErrorLabel.setText("unknown csvt attribute: {}".format(e.attributeName))            
+            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController','unknown csvt attribute: {}').format(e.attributeName))            
         except CsvCsvtMissmatchException:
-            self.newDialog.filePathErrorLabel.setText("csv<->csvt missmatch")        
+            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController','csv<->csvt missmatch'))        
         except GeoCsvUnknownGeometryTypeException:
-            self.newDialog.filePathErrorLabel.setText("csvt geometry type exception")            
+            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController','csvt geometry type exception'))            
         except:
-            self.newDialog.filePathErrorLabel.setText("no csvt file found")
+            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController','no csvt file found'))
         self._showManualGeometryTypeWidget()                                        
                                
     def _updateManualGeometryTypeLists(self):
         try:
             attributeNames = self.dataSourceHandler.extractAttributeNamesFromCsv()                    
         except:
-            self.newDialog.filePathErrorLabel.setText("error while loading csv")
+            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController','error while loading csv'))
         else:
             self.geometryFieldUpdate = True
             self.newDialog.eastingAttributeDropDown.clear()
@@ -156,12 +158,12 @@ class GeoCsvNewController:
                         try:
                             self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvPointVectorDescriptor(self.newDialog.eastingAttributeDropDown.currentIndex() - 1, self.newDialog.northingAttributeDropDown.currentIndex() - 1)
                         except:
-                            self.newDialog.filePathErrorLabel.setText("error in geometry selection")                             
+                            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController','error in geometry selection'))                             
                 else:
                     try:
                         self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvWktVectorDescriptor(self.newDialog.wktAttributeDropDown.currentIndex() - 1)
                     except:
-                        self.newDialog.filePathErrorLabel.setText("error in geometry selection") 
+                        self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController','error in geometry selection')) 
         self._updateAcceptButton()
                 
     def _toggleGeometryType(self):    
@@ -210,7 +212,7 @@ class GeoCsvReconnectController:
                     csvVectorLayer.initController(vectorLayerController)                    
                     csvVectorLayers.append(csvVectorLayer)                                                    
                 except:                  
-                    GeoCsvNewController.getInstance().createCsvVectorLayer(csvVectorLayers, qgsLayer)
+                    GeoCsvNewController.getInstance().createCsvVectorLayer(csvVectorLayers, qgsLayer, QApplication.translate('GeoCsvReconnectController','Couldn\'t automatically restore csv layer "{}"').format(qgsLayer.name()))
                                 
                                         
 class VectorLayerController:
@@ -259,13 +261,13 @@ class VectorLayerSaveConflictController:
             self.handleConflict()
     
     def _onConflictSaveAsButton(self):        
-        filePath = QFileDialog.getSaveFileName(self.conflictDialog, QtHelper.translate("Save File"), "", QtHelper.translate("Files (*.csv)"));
+        filePath = QFileDialog.getSaveFileName(self.conflictDialog, QApplication.translate('VectorLayerSaveConflictController','Save File'), "", QApplication.translate('VectorLayerSaveConflictController','Files (*.csv)'));
         if filePath:
             self.conflictDialog.accept()
             try:
                 self.csvDataSourceHandler.moveDataSourcesToPath(filePath)
                 self.csvDataSourceHandler.syncFeaturesWithCsv(self.csvVectorLayer().vectorLayerDescriptor, self.features, filePath)
             except:
-                QMessageBox.information(None, "Invalid path", "An error occured while trying to save file on new location. Please try again.")            
+                QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController','Invalid path'), QApplication.translate('VectorLayerSaveConflictController','An error occured while trying to save file on new location. Please try again.'))            
         
         
