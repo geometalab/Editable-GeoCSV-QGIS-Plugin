@@ -54,7 +54,8 @@ class GeoCsvNewController:
         if qgsVectorLayer:
             csvPath = qgsVectorLayer.customProperty('csv_filepath')
             if csvPath:
-                self.newDialog.filePath.setText(csvPath)                     
+                self.newDialog.filePath.setText(csvPath)
+        self._updateAcceptButton()
         self.newDialog.show()
         result = self.newDialog.exec_()
         if result:
@@ -71,15 +72,15 @@ class GeoCsvNewController:
         self.newDialog.filePath.textChanged.connect(self.onFilePathChange)
         self.newDialog.acceptButton.clicked.connect(self.newDialog.accept)
         self.newDialog.rejectButton.clicked.connect(self.newDialog.reject)
-        self.newDialog.pointGeometryTypeRadio.toggled.connect(self.toggleGeometryType)
-        self.newDialog.wktGeometryTypeRadio.toggled.connect(self.toggleGeometryType)
+        self.newDialog.pointGeometryTypeRadio.toggled.connect(self._toggleGeometryType)
+        self.newDialog.wktGeometryTypeRadio.toggled.connect(self._toggleGeometryType)
         self.newDialog.northingAttributeDropDown.currentIndexChanged.connect(self._manualGeometryDropdownChanged)
         self.newDialog.eastingAttributeDropDown.currentIndexChanged.connect(self._manualGeometryDropdownChanged)
         self.newDialog.wktAttributeDropDown.currentIndexChanged.connect(self._manualGeometryDropdownChanged)
         
     def initVisibility(self):
-        self.hideManualGeometryTypeWidget() 
-        self.toggleGeometryType()       
+        self._hideManualGeometryTypeWidget() 
+        self._toggleGeometryType()       
                      
     def onFileBrowserButton(self):        
         csvFilePath = QFileDialog.getOpenFileName()
@@ -87,19 +88,21 @@ class GeoCsvNewController:
             self.newDialog.filePath.setText(csvFilePath)            
             
     def onFilePathChange(self):
+        self.dataSourceHandler = None
+        self.vectorDescriptor = None
         csvFilePath = self.newDialog.filePath.text()
         if csvFilePath:                            
             self._updateDataSource(csvFilePath)
-            
-    def onCsvFileWritingError(self):
-        pass
-            
+        else:            
+            self.newDialog.filePathErrorLabel.setText("")
+        self._updateAcceptButton()
+                       
     def _updateDataSource(self, csvFilePath):
         try:        
             self.dataSourceHandler = GeoCsvDataSourceHandler(csvFilePath)            
         except InvalidDataSourceException:
-            self.newDialog.filePathErrorLabel.setText("invalid file path")
-            self.hideManualGeometryTypeWidget()   
+            self.newDialog.filePathErrorLabel.setText("invalid file path")            
+            self._hideManualGeometryTypeWidget()   
         else:            
             self._createVectorDescriptorFromCsvt(csvFilePath)
                             
@@ -115,19 +118,13 @@ class GeoCsvNewController:
             self.newDialog.filePathErrorLabel.setText("csvt geometry type exception")            
         except:
             self.newDialog.filePathErrorLabel.setText("no csvt file found")
-        self.showManualGeometryTypeWidget()                                        
-            
-    def _createVectorDescriptorFromManualGeometryDefinition(self):
-        if self.newDialog.pointGeometryTypeRadio.isChecked():
-            pass
-        else:   
-            pass     
-                   
+        self._showManualGeometryTypeWidget()                                        
+                               
     def _updateManualGeometryTypeLists(self):
         try:
             attributeNames = self.dataSourceHandler.extractAttributeNamesFromCsv()                    
         except:
-            pass
+            self.newDialog.filePathErrorLabel.setText("error while loading csv")
         else:
             self.geometryFieldUpdate = True
             self.newDialog.eastingAttributeDropDown.clear()
@@ -149,23 +146,25 @@ class GeoCsvNewController:
                     self.newDialog.wktAttributeDropDown.setCurrentIndex(self.vectorDescriptor.wktIndex + 1)
             self.geometryFieldUpdate = False
                    
-    def _manualGeometryDropdownChanged(self, index):
-        if not self.geometryFieldUpdate and not index == 0:
+    def _manualGeometryDropdownChanged(self, index):        
+        if not self.geometryFieldUpdate:
             self.vectorDescriptor = None
             self.newDialog.filePathErrorLabel.setText("")
-            if self.newDialog.pointGeometryTypeRadio.isChecked():
-                if not self.newDialog.eastingAttributeDropDown.currentIndex() == 0 and not self.newDialog.northingAttributeDropDown.currentIndex() == 0:
+            if not index == 0:
+                if self.newDialog.pointGeometryTypeRadio.isChecked():
+                    if not self.newDialog.eastingAttributeDropDown.currentIndex() == 0 and not self.newDialog.northingAttributeDropDown.currentIndex() == 0:
+                        try:
+                            self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvPointVectorDescriptor(self.newDialog.eastingAttributeDropDown.currentIndex() - 1, self.newDialog.northingAttributeDropDown.currentIndex() - 1)
+                        except:
+                            self.newDialog.filePathErrorLabel.setText("error in geometry selection")                             
+                else:
                     try:
-                        self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvPointVectorDescriptor(self.newDialog.eastingAttributeDropDown.currentIndex() - 1, self.newDialog.northingAttributeDropDown.currentIndex() - 1)
+                        self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvWktVectorDescriptor(self.newDialog.wktAttributeDropDown.currentIndex() - 1)
                     except:
-                        self.newDialog.filePathErrorLabel.setText("error in geometry selection")                             
-            else:
-                try:
-                    self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvWktVectorDescriptor(self.newDialog.wktAttributeDropDown.currentIndex() - 1)
-                except:
-                    self.newDialog.filePathErrorLabel.setText("error in geometry selection") 
+                        self.newDialog.filePathErrorLabel.setText("error in geometry selection") 
+        self._updateAcceptButton()
                 
-    def toggleGeometryType(self):    
+    def _toggleGeometryType(self):    
         if self.newDialog.pointGeometryTypeRadio.isChecked():
             self.newDialog.wktTypeWidget.hide()            
             self.newDialog.pointTypeWidget.show()        
@@ -173,16 +172,20 @@ class GeoCsvNewController:
             self.newDialog.pointTypeWidget.hide()                    
             self.newDialog.wktTypeWidget.show()
             
-    def showManualGeometryTypeWidget(self):
+    def _showManualGeometryTypeWidget(self):
         self._updateManualGeometryTypeLists()
-        self.toggleGeometryType()
+        self._toggleGeometryType()
         self.newDialog.manualGeometryWidget.show()        
     
-    def hideManualGeometryTypeWidget(self):
-        self.newDialog.manualGeometryWidget.hide()  
+    def _hideManualGeometryTypeWidget(self):
+        self.newDialog.manualGeometryWidget.hide() 
+           
+    def _updateAcceptButton(self):
+        self.newDialog.acceptButton.setEnabled(self._isValid())
+                    
+    def _isValid(self):
+        return not self.dataSourceHandler == None and not self.vectorDescriptor == None    
         
-    def _reset(self):
-        self.newDialog.filePathErrorLabel.setText("")    
 
 
 class GeoCsvReconnectController:
