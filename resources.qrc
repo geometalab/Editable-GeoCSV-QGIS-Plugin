@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/plugins/geocsveditor" >
-        <file>icon.png</file>
+    <qresource prefix="/plugins/editablegeocsv" >
+        <file>geocsv.png</file>
     </qresource>
 </RCC>

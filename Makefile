@@ -58,7 +58,7 @@ UI_FILES = \
     geocsv_dialog_new.ui \
     geocsv_dialog_conflict.ui
 
-EXTRAS = icon.png metadata.txt
+EXTRAS = geocsv.png metadata.txt
 
 COMPILED_RESOURCE_FILES = resources_rc.py
 
@@ -81,7 +81,7 @@ default: compile
 
 compile: $(COMPILED_RESOURCE_FILES)
 
-%_rc.py : %.qrc $(RESOURCES_SRC)
+%_rc.py : %.qrc
 	pyrcc4 -o $*_rc.py  $<
 
 %.qm : %.ts
