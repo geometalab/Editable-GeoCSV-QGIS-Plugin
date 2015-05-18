@@ -28,7 +28,7 @@ from PyQt4.Qt import QMessageBox, QApplication
 
 from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict
 from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory
-from geocsv_model import CsvVectorLayerDescriptor
+from geocsv_model import CsvVectorLayerDescriptor, GeoCSVAttribute
 from geocsv_exception import *
 
 
@@ -228,9 +228,35 @@ class VectorLayerController:
         except:                       
             VectorLayerSaveConflictController(self.csvVectorLayer(), self.csvDataSourceHandler).handleConflict()
             return False
+        
+    def addAttributes(self, attributes, vectorLayerDescriptor):        
+        for attribute in attributes:
+            # : :type attribute: QgsField  
+            vectorLayerDescriptor.addAttribute(GeoCSVAttribute.createFromQgsField(attribute))
+        try:
+            self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())
+        except:
+            QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController','CSVT file could not be updated'), QApplication.translate('VectorLayerSaveConflictController','An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'))
+
+    def deleteAttributes(self, attributeIds, vectorLayerDescriptor):
+        try:
+            for attributeId in attributeIds:
+                vectorLayerDescriptor.deleteAttributeAtIndex(attributeId)
+        except:
+            QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController','Error while updating attributes happend'), QApplication.translate('VectorLayerSaveConflictController','An error occured while trying to update the attributes list. Nothing has been stored on disk.'))
+        else:
+            try:
+                self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())
+            except:
+                QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController','CSVT file could not be updated'), QApplication.translate('VectorLayerSaveConflictController','An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'))
+                
+    def checkDeleteAttribute(self, attributeId, vectorLayerDescriptor):
+        if vectorLayerDescriptor.indexIsGeoemtryIndex(attributeId):
+            QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController','Geometry index violation'), QApplication.translate('VectorLayerSaveConflictController','You tried to delete an attribute which is providing geometry information. The change will not be saved to disk.'))
                         
     def updateLayerCrs(self, crsWkt):
         self.csvDataSourceHandler.updatePrjFile(crsWkt)
+
         
 class VectorLayerSaveConflictController:
     def __init__(self, csvVectorLayer, csvDataSourceHandler):        

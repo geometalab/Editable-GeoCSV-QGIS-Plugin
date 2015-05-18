@@ -23,6 +23,7 @@ from qgis.core import QgsField, QgsGeometry, QgsPoint, QgsFeatureRequest
 from PyQt4.QtCore import QVariant
 
 from geocsv_exception import GeoCsvUnknownGeometryTypeException,GeoCsvUnknownAttributeException
+from PyQt4.Qt import QMetaType
 
 class GeometryType:
     # Currently, QGis can only determine Point, LineString and Polygon geometry types
@@ -101,6 +102,20 @@ class GeoCSVAttribute:
         self.name = attributeName        
         self.type = attributeType
         
+    @staticmethod
+    def createFromQgsField(qgsField):
+        ':type qgsField:QgsField'
+        attributeType = None
+        if qgsField.type() == QMetaType.Int:
+            attributeType = GeoCsvAttributeType.integer
+        elif qgsField.type() == QMetaType.Double:
+            attributeType = GeoCsvAttributeType.real
+        else:
+            attributeType = GeoCsvAttributeType.string
+        geoCsvAttributeType = GeoCsvAttributeType(attributeType, qgsField.length(), qgsField.precision())        
+        return GeoCSVAttribute(geoCsvAttributeType, qgsField.name())
+        
+            
     def createQgsField(self):
         qgsField = None
         if self.type.attributeType == GeoCsvAttributeType.integer:
@@ -140,13 +155,33 @@ class CsvVectorLayerDescriptor:
     def configureAndValidateWithSampleRow(self, row):
         raise NotImplementedError("must be implemented")
     
+    def indexIsGeoemtryIndex(self, attributeIndex):
+        raise NotImplementedError("must be implemented")
+    
+    def getAttributeTypes(self):
+        attributeTypes = []
+        for attribute in self.attributes:
+            attributeTypes.append(attribute.type)
+        return attributeTypes
+    
     def getAttributesAsQgsFields(self):
         fields = []
         # : :type attribute: GeoCSVAttribute
         for attribute in self.attributes:            
             fields.append(attribute.createQgsField())
         return fields
-            
+    
+    def addAttribute(self, geoCsvAttribute):
+        # : :type geoCsvAttribute: GeoCSVAttribute
+        self.attributes.append(geoCsvAttribute)
+        
+    def deleteAttributeAtIndex(self, index):                
+        try:
+            if not self.indexIsGeoemtryIndex(index):
+                del self.attributes[index]
+        except:
+            raise
+        
     def changeAttributeValue(self, vectorLayer, feature, attributeName, newValue):
         ':type qgsVectorLayer: QgsVectorLayer'
         ':type feature: QgsFeature'
@@ -175,6 +210,9 @@ class WktCsvVectorLayerDescriptor(CsvVectorLayerDescriptor):
         
     def getGeometryFromRow(self, row):
         return QgsGeometry.fromWkt(row[self.wktIndex])
+    
+    def indexIsGeoemtryIndex(self, attributeIndex):
+        return (attributeIndex == self.wktIndex)
              
     def updateGeoAttributes(self, vectorLayer, feature):
         ':type qgsVectorLayer: QgsVectorLayer'
@@ -211,6 +249,9 @@ class PointCsvVectorLayerDescriptor(CsvVectorLayerDescriptor):
         except ValueError:
             raise GeoCsvUnknownGeometryTypeException()
         
+    def indexIsGeoemtryIndex(self, attributeIndex):
+        return (attributeIndex == self.eastingIndex or attributeIndex == self.northingIndex)
+        
 
 class CsvVectorLayer():    
     def __init__(self, qgsVectorLayer, vectorLayerDescriptor):           
@@ -233,10 +274,13 @@ class CsvVectorLayer():
         qgsVectorLayer.committedFeaturesRemoved.connect(self.featuresRemoved)
         qgsVectorLayer.geometryChanged.connect(self.geometryChanged)
         qgsVectorLayer.layerCrsChanged.connect(self.layerCrsDidChange)
-        
+        qgsVectorLayer.attributeDeleted.connect(self.checkAttributeDeleted)
+        qgsVectorLayer.committedAttributesAdded.connect(self.attributesAdded)
+        qgsVectorLayer.committedAttributesDeleted.connect(self.attributesDeleted)
         
     def editingDidStart(self):
-        pass
+        self.qgsVectorLayer.editBuffer().committedAttributesAdded.connect(self.attributesAdded)
+        self.qgsVectorLayer.editBuffer().committedAttributesDeleted.connect(self.attributesDeleted)
     
     def editingDidStop(self):
         if self.dirty:
@@ -250,7 +294,18 @@ class CsvVectorLayer():
     
     def featuresRemoved(self, layer, featureIds):
         self.dirty = True
-    
+        
+    def attributesAdded(self, layerId, attributes):
+        self.vectorLayerController.addAttributes(attributes, self.vectorLayerDescriptor)
+        self.dirty = True
+        
+    def attributesDeleted(self, layerId, attributeIds):
+        self.vectorLayerController.deleteAttributes(attributeIds, self.vectorLayerDescriptor) 
+        self.dirty = True
+        
+    def checkAttributeDeleted(self, attributeId):
+        self.vectorLayerController.checkDeleteAttribute(attributeId, self.vectorLayerDescriptor)
+                
     def geometryChanged(self, featureId, geometry):
         feature = self.qgsVectorLayer.getFeatures(QgsFeatureRequest(featureId)).next()
         self.vectorLayerDescriptor.updateGeoAttributes(self.qgsVectorLayer, feature)

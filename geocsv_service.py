@@ -142,7 +142,7 @@ class GeoCsvDataSourceHandler:
                 FileIOException):
             raise
         try:
-            self._updateCsvtFile(attributeTypes)
+            self.updateCsvtFile(attributeTypes)
         except FileIOException:
             raise
         return descriptor         
@@ -178,7 +178,7 @@ class GeoCsvDataSourceHandler:
                 FileIOException):
             raise
         try:
-            self._updateCsvtFile(attributeTypes)
+            self.updateCsvtFile(attributeTypes)
         except FileIOException:
             raise            
         return descriptor     
@@ -261,6 +261,15 @@ class GeoCsvDataSourceHandler:
             self._fileContainer.moveToNewPath(newPath)
         except UnknownFileFormatException:
             raise 
+        
+    def updateCsvtFile(self, attributeTypes):
+        try: 
+            with open(self._fileContainer.constructCsvtPath(), "w+") as csvtfile:                 
+                writer = csv.writer(csvtfile, dialect=self._csvDialect)
+                geoCsvAttributeTypes = [attributeType.toCsvtString() for attributeType in attributeTypes]
+                writer.writerow([unicode(s).encode("utf-8") for s in geoCsvAttributeTypes])
+        except:
+            raise FileIOException() 
                       
     def _extractGeoCsvAttributeTypesFromCsvt(self):
         if not self.hasCsvt():
@@ -357,14 +366,7 @@ class GeoCsvDataSourceHandler:
             raise GeoCsvMalformedGeoAttributeException()
         return descriptor
     
-    def _updateCsvtFile(self, attributeTypes):
-        try: 
-            with open(self._fileContainer.constructCsvtPath(), "w+") as csvtfile:                 
-                writer = csv.writer(csvtfile, dialect=self._csvDialect)
-                geoCsvAttributeTypes = [attributeType.toCsvtString() for attributeType in attributeTypes]
-                writer.writerow([unicode(s).encode("utf-8") for s in geoCsvAttributeTypes])
-        except:
-            raise FileIOException()         
+        
                                                                  
 class GeoCsvFileContainer:
             
