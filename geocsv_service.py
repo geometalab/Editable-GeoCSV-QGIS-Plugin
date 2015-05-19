@@ -46,10 +46,9 @@ class GeoCsvVectorLayerFactory:
         dataProvider.addAttributes(vectorLayerDescriptor.getAttributesAsQgsFields())        
         qgsVectorLayer.updateFields()
         dataProvider.addFeatures(dataSourceHandler.createFeaturesFromCsv(vectorLayerDescriptor))                
-        qgsVectorLayer.updateExtents()
-        qgsVectorLayer.setCustomProperty("editablegeocsv_path", dataSourceHandler.getPathToCsvFile())
-        csvVectorLayer = CsvVectorLayer(qgsVectorLayer, vectorLayerDescriptor) 
-                
+        qgsVectorLayer.updateExtents()        
+        csvVectorLayer = CsvVectorLayer(qgsVectorLayer, vectorLayerDescriptor)
+        csvVectorLayer.updateGeoCsvPath(dataSourceHandler.getPathToCsvFile())                 
         return csvVectorLayer 
         
 

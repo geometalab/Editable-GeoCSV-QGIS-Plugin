@@ -313,3 +313,10 @@ class CsvVectorLayer():
     
     def layerCrsDidChange(self):
         self.vectorLayerController.updateLayerCrs(self.qgsVectorLayer.crs().toWkt())
+        
+    def updateGeoCsvPath(self, path):
+        self.qgsVectorLayer.setMetadataUrl(path)
+        self.qgsVectorLayer.setCustomProperty("editablegeocsv_path", path)
+        
+    def getGeoCsvPath(self):
+        return self.qgsVectorLayer.customProperty('editablegeocsv_path')
