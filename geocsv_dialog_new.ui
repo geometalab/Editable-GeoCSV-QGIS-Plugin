@@ -81,7 +81,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="manualGeometryWidget" native="true">
+  <widget class="QWidget" name="geometryWidget" native="true">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -122,9 +122,6 @@
       <string>WKT Field</string>
      </property>
     </widget>
-    <zorder>wktAttributeDropDown</zorder>
-    <zorder>label_4</zorder>
-    <zorder>pointTypeWidget</zorder>
    </widget>
    <widget class="QRadioButton" name="pointGeometryTypeRadio">
     <property name="geometry">

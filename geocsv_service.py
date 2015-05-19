@@ -24,8 +24,10 @@ import os
 import shutil
 
 from qgis.core import QgsVectorLayer, QgsFeature, QgsCoordinateReferenceSystem
+from qgis.gui import QgsMessageBar
 from geocsv_exception import *
 from geocsv_model import CsvVectorLayer, GeoCsvAttributeType, PointCsvVectorLayerDescriptor, WktCsvVectorLayerDescriptor, GeoCSVAttribute
+from PyQt4.Qt import QApplication
 
 class GeoCsvVectorLayerFactory:
      
@@ -45,7 +47,7 @@ class GeoCsvVectorLayerFactory:
         qgsVectorLayer.updateFields()
         dataProvider.addFeatures(dataSourceHandler.createFeaturesFromCsv(vectorLayerDescriptor))                
         qgsVectorLayer.updateExtents()
-        qgsVectorLayer.setCustomProperty("csv_filepath", dataSourceHandler.getPathToCsvFile())
+        qgsVectorLayer.setCustomProperty("editablegeocsv_path", dataSourceHandler.getPathToCsvFile())
         csvVectorLayer = CsvVectorLayer(qgsVectorLayer, vectorLayerDescriptor) 
                 
         return csvVectorLayer 
@@ -76,6 +78,9 @@ class GeoCsvDataSourceHandler:
                 
     def hasCsvt(self):
         return self._fileContainer.hasCsvt()
+    
+    def hasPrj(self):
+        return self._fileContainer.hasPrj()
     
     def getPathToCsvFile(self):
         return self._fileContainer.pathToCsvFile
@@ -140,11 +145,7 @@ class GeoCsvDataSourceHandler:
                 GeoCsvMalformedGeoAttributeException,
                 GeoCsvUnknownGeometryTypeException,
                 FileIOException):
-            raise
-        try:
-            self.updateCsvtFile(attributeTypes)
-        except FileIOException:
-            raise
+            raise        
         return descriptor         
           
     
@@ -176,11 +177,7 @@ class GeoCsvDataSourceHandler:
                 GeoCsvMalformedGeoAttributeException,
                 GeoCsvUnknownGeometryTypeException,
                 FileIOException):
-            raise
-        try:
-            self.updateCsvtFile(attributeTypes)
-        except FileIOException:
-            raise            
+            raise          
         return descriptor     
             
     def createFeaturesFromCsv(self, vectorLayerDescriptor):
@@ -377,7 +374,7 @@ class GeoCsvFileContainer:
         if not os.path.isfile(pathToCsvFile):
             raise FileNotFoundException()
         self.rootPath, fileExtension = os.path.splitext(pathToCsvFile)
-        if fileExtension == '.csv':
+        if fileExtension == '.csv' or fileExtension == '.tsv':
             self.pathToCsvFile = pathToCsvFile
             self._createPathToCSVT()
             self._createPathToPRJ()
@@ -401,7 +398,7 @@ class GeoCsvFileContainer:
     
     def moveToNewPath(self, newPath):
         newRootPath, newFileExtension = os.path.splitext(newPath)
-        if newFileExtension == '.csv':
+        if newFileExtension == '.csv' or newFileExtension == '.tsv':
             shutil.copy(self.pathToCsvFile, newPath)
             if self.hasCsvt():
                 shutil.copy(self.pathToCsvtFile, newRootPath+'.csvt')
@@ -422,5 +419,42 @@ class GeoCsvFileContainer:
             self.pathToPrj = self.rootPath + '.prj'    
             
     def _createFileName(self): 
-        self.fileName = os.path.basename(self.rootPath)              
+        self.fileName = os.path.basename(self.rootPath)
+        
+class NotificationHandler:
+    
+    _iface = None
+    _duration = 4
+    
+    @classmethod
+    def configureIface(cls, iface):        
+        cls._iface = iface
+    
+    @classmethod    
+    def pushError(cls, title, message):
+        cls._checkConfiguration()
+        cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.CRITICAL, duration=cls._duration)
+        
+    @classmethod    
+    def pushWarning(cls, title, message):
+        cls._checkConfiguration()
+        cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.WARNING, duration=cls._duration)
+        
+    @classmethod  
+    def pushSuccess(cls, title, message):
+        cls._checkConfiguration()
+        cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.SUCCESS, duration=cls._duration)
+    
+    @classmethod  
+    def pushInfo(cls, title, message):
+        cls._checkConfiguration()
+        cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.INFO, duration=cls._duration)
+    
+    @classmethod 
+    def _checkConfiguration(cls):
+        if not cls._iface:
+            raise RuntimeError("iface is not configured")
+        
+                          
+    
         
