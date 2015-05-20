@@ -269,8 +269,8 @@ class CsvVectorLayer():
     def initConnections(self, qgsVectorLayer):
         ':type qgsVectorLayer: QgsVectorLayer'        
         qgsVectorLayer.editingStarted.connect(self.editingDidStart)
-        qgsVectorLayer.editingStopped.connect(self.editingDidStop)        
-        qgsVectorLayer.committedFeaturesAdded.connect(self.featuresAdded)
+        qgsVectorLayer.editingStopped.connect(self.editingDidStop) 
+        qgsVectorLayer.featureAdded.connect(self.featureAdded)               
         qgsVectorLayer.committedFeaturesRemoved.connect(self.featuresRemoved)
         qgsVectorLayer.geometryChanged.connect(self.geometryChanged)
         qgsVectorLayer.layerCrsChanged.connect(self.layerCrsDidChange)
@@ -287,10 +287,9 @@ class CsvVectorLayer():
             features = self.qgsVectorLayer.getFeatures()
             if self.vectorLayerController.syncFeatures(features, self.vectorLayerDescriptor):
                 self.dirty = False
-                        
-    def featuresAdded(self, layer, features):
-        for feature in features:
-            self.geometryChanged(feature.id(), feature.geometry())        
+                                
+    def featureAdded(self, featureId):
+        self.geometryChanged(featureId, None)      
     
     def featuresRemoved(self, layer, featureIds):
         self.dirty = True

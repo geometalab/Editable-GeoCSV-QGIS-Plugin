@@ -27,14 +27,14 @@ import resources_rc
 from geocsv_controller import GeoCsvNewController, GeoCsvReconnectController
 from geocsv_service import NotificationHandler
 
-# import sys;
-# sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
-# import pydevd
+import sys;
+sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
+import pydevd
 
 class EditableGeoCsv:
 
     def __init__(self, iface):          
-#         pydevd.settrace()                            
+        pydevd.settrace()                            
         self._iface = iface        
         self.plugin_dir = os.path.dirname(__file__)        
         locale = QSettings().value('locale/userLocale')[0:2]
