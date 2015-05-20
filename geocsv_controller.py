@@ -78,7 +78,7 @@ class GeoCsvNewController:
                     try:
                         self.dataSourceHandler.updateCsvtFile(self.vectorDescriptor.getAttributeTypes())
                     except FileIOException:                                                
-                        NotificationHandler.pushWarning(QApplication.translate('GeoCsvNewController', 'File Error'), QApplication.translate('GeoCsvNewController', 'The csvt file couldn\'t be updated on disk'))         
+                        NotificationHandler.pushWarning(QApplication.translate('GeoCsvNewController', 'CSVT File Error'), QApplication.translate('GeoCsvNewController', 'The csvt file couldn\'t be updated on disk.'))         
                 if not self.dataSourceHandler.hasPrj():
                     self.dataSourceHandler.updatePrjFile(csvVectorLayer.qgsVectorLayer.crs().toWkt())
                     
@@ -91,9 +91,9 @@ class GeoCsvNewController:
         self.newDialog.rejectButton.clicked.connect(self.newDialog.reject)
         self.newDialog.pointGeometryTypeRadio.toggled.connect(self._toggleGeometryType)
         self.newDialog.wktGeometryTypeRadio.toggled.connect(self._toggleGeometryType)
-        self.newDialog.northingAttributeDropDown.currentIndexChanged.connect(self._createVectorDescriptorManually)
-        self.newDialog.eastingAttributeDropDown.currentIndexChanged.connect(self._createVectorDescriptorManually)
-        self.newDialog.wktAttributeDropDown.currentIndexChanged.connect(self._createVectorDescriptorManually)
+        self.newDialog.northingAttributeDropDown.currentIndexChanged.connect(self._createVectorDescriptorFromGeometryTypeWidget)
+        self.newDialog.eastingAttributeDropDown.currentIndexChanged.connect(self._createVectorDescriptorFromGeometryTypeWidget)
+        self.newDialog.wktAttributeDropDown.currentIndexChanged.connect(self._createVectorDescriptorFromGeometryTypeWidget)
         
     def initVisibility(self):
         self._hideGeometryTypeWidget() 
@@ -102,8 +102,10 @@ class GeoCsvNewController:
     def onFileBrowserButton(self):             
         csvFilePath = QFileDialog.getOpenFileName(self.newDialog, QApplication.translate('GeoCsvNewController', 'Open GeoCSV File'), '', QApplication.translate('GeoCsvNewController', 'Files (*.csv *.tsv)'))
         if csvFilePath:
-            self.newDialog.filePath.setText(csvFilePath)            
-            
+            self.newDialog.filePath.setText(csvFilePath)   
+        self.newDialog.activateWindow()
+#         self.newDialog.setFocus()                 
+                    
     def onFilePathChange(self):
         self.dataSourceHandler = None
         self.vectorDescriptor = None
@@ -112,13 +114,13 @@ class GeoCsvNewController:
             try:                    
                 self._updateDataSource(csvFilePath)                
             except InvalidDataSourceException:
-                self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController', 'invalid file path'))            
+                self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'invalid file path'))            
                 self._hideGeometryTypeWidget()
             else:
                 self._createVectorDescriptorFromCsvt()
                 self._showGeometryTypeWidget()     
         else:            
-            self.newDialog.filePathErrorLabel.setText("")
+            self.newDialog.statusNotificationLabel.setText("")
         self._updateAcceptButton()
                        
     def _updateDataSource(self, csvFilePath):
@@ -130,20 +132,20 @@ class GeoCsvNewController:
     def _createVectorDescriptorFromCsvt(self):
         try:
             self.vectorDescriptor = self.dataSourceHandler.createCsvVectorDescriptorFromCsvt()
-            self.newDialog.filePathErrorLabel.setText("")                
+            self.newDialog.statusNotificationLabel.setText("")                
         except GeoCsvUnknownAttributeException as e:
-            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController', 'unknown csvt attribute: {}').format(e.attributeName))            
+            self.newDialog.statusNotificationLabel.setTsext(QApplication.translate('GeoCsvNewController', 'unknown csvt attribute: {}').format(e.attributeName))            
         except CsvCsvtMissmatchException:
-            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController', 'csv<->csvt missmatch'))        
+            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'csv<->csvt missmatch'))        
         except GeoCsvUnknownGeometryTypeException:
-            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController', 'csvt geometry type exception'))            
+            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'csvt geometry type exception'))            
         except:
-            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController', 'no csvt file found'))
+            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'no csvt file found'))
         
-    def _createVectorDescriptorManually(self, index):        
+    def _createVectorDescriptorFromGeometryTypeWidget(self, index):        
         if not self.geometryFieldUpdate:
             self.vectorDescriptor = None
-            self.newDialog.filePathErrorLabel.setText("")
+            self.newDialog.statusNotificationLabel.setText("")
             if not index == 0:
                 try:
                     if self.newDialog.pointGeometryTypeRadio.isChecked():
@@ -152,7 +154,7 @@ class GeoCsvNewController:
                     else:                    
                         self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvWktVectorDescriptor(self.newDialog.wktAttributeDropDown.currentIndex() - 1)
                 except:
-                    self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController', 'error in geometry selection'))
+                    self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'error in geometry selection'))
                 if self.vectorDescriptor:
                     self.csvtFileIsDirty = True     
             self._updateAcceptButton()
@@ -162,7 +164,7 @@ class GeoCsvNewController:
         try:
             attributeNames = self.dataSourceHandler.extractAttributeNamesFromCsv()                    
         except:
-            self.newDialog.filePathErrorLabel.setText(QApplication.translate('GeoCsvNewController', 'error while loading csv'))
+            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'error while loading csv'))
         else:
             self.geometryFieldUpdate = True
             self.newDialog.eastingAttributeDropDown.clear()
@@ -202,6 +204,8 @@ class GeoCsvNewController:
            
     def _updateAcceptButton(self):
         self.newDialog.acceptButton.setEnabled(self._isValid())
+        if self._isValid():
+            self.newDialog.acceptButton.setFocus()        
                     
     def _isValid(self):
         return not self.dataSourceHandler == None and not self.vectorDescriptor == None    
@@ -256,9 +260,9 @@ class VectorLayerController:
             # : :type attribute: QgsField  
             vectorLayerDescriptor.addAttribute(GeoCSVAttribute.createFromQgsField(attribute))
         try:
-            self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())
+            self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())            
         except:
-            QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController', 'CSVT file could not be updated'), QApplication.translate('VectorLayerSaveConflictController', 'An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'))
+            NotificationHandler.pushWarning(QApplication.translate('GeoCsvNewController', 'CSVT File Error'), QApplication.translate('GeoCsvNewController', 'An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'),duration=0)            
 
     def deleteAttributes(self, attributeIds, vectorLayerDescriptor):
         try:

@@ -49,7 +49,7 @@ class EditableGeoCsv:
         NotificationHandler.configureIface(iface)
         #container for all csv vector layers                        
         self.csvVectorLayers = []          
-        #if the project file is successfully read, reconnect all CsvVectorLayers with datasource
+        #if the project file is successfully read, reconnect all CsvVectorLayers with its datasource
         self._iface.projectRead.connect(lambda: GeoCsvReconnectController.getInstance().reconnectCsvVectorLayers(self.csvVectorLayers))
                                                       
     def initGui(self):

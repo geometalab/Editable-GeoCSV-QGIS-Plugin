@@ -31,7 +31,7 @@
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QLabel" name="filePathErrorLabel">
+     <widget class="QLabel" name="statusNotificationLabel">
       <property name="autoFillBackground">
        <bool>false</bool>
       </property>

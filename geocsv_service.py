@@ -435,19 +435,26 @@ class NotificationHandler:
         cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.CRITICAL, duration=cls._duration)
         
     @classmethod    
-    def pushWarning(cls, title, message):
+    def pushWarning(cls, title, message, duration=None):
         cls._checkConfiguration()
-        cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.WARNING, duration=cls._duration)
+        cls._pushMessage(title, message, QgsMessageBar.WARNING, duration)
+#         cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.WARNING, duration=cls._duration)
         
     @classmethod  
-    def pushSuccess(cls, title, message):
+    def pushSuccess(cls, title, message, duration=None):
         cls._checkConfiguration()
-        cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.SUCCESS, duration=cls._duration)
+        cls._pushMessage(title, message, QgsMessageBar.SUCCESS, duration)   
+#         cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.SUCCESS, duration=cls._duration)
     
     @classmethod  
     def pushInfo(cls, title, message):
         cls._checkConfiguration()
         cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.INFO, duration=cls._duration)
+    
+    @classmethod  
+    def _pushMessage(cls, title, message, messageLevel, duration=None):
+        duration = duration if duration is not None else cls._duration
+        cls._iface.messageBar().pushMessage(title,message,level=messageLevel, duration=duration)
     
     @classmethod 
     def _checkConfiguration(cls):
