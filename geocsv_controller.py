@@ -279,8 +279,11 @@ class VectorLayerController:
                 QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController', 'CSVT file could not be updated'), QApplication.translate('VectorLayerSaveConflictController', 'An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'))
                 
     def checkDeleteAttribute(self, attributeId, vectorLayerDescriptor):
+        isOk = True
         if vectorLayerDescriptor.indexIsGeoemtryIndex(attributeId):
             QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController', 'Geometry index violation'), QApplication.translate('VectorLayerSaveConflictController', 'You tried to delete an attribute which is providing geometry information. The change will not be saved to disk.'))
+            isOk = False
+        return isOk
                         
     def updateLayerCrs(self, crsWkt):
         self.csvDataSourceHandler.updatePrjFile(crsWkt)

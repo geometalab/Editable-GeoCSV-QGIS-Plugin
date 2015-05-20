@@ -303,7 +303,10 @@ class CsvVectorLayer():
         self.dirty = True
         
     def checkAttributeDeleted(self, attributeId):
-        self.vectorLayerController.checkDeleteAttribute(attributeId, self.vectorLayerDescriptor)
+        if not self.vectorLayerController.checkDeleteAttribute(attributeId, self.vectorLayerDescriptor):
+            pass
+#             self.qgsVectorLayer.rollBack()
+            
                 
     def geometryChanged(self, featureId, geometry):
         feature = self.qgsVectorLayer.getFeatures(QgsFeatureRequest(featureId)).next()
@@ -314,7 +317,7 @@ class CsvVectorLayer():
         self.vectorLayerController.updateLayerCrs(self.qgsVectorLayer.crs().toWkt())
         
     def updateGeoCsvPath(self, path):
-        self.qgsVectorLayer.setMetadataUrl(path)
+        self.qgsVectorLayer.setDataUrl(path)        
         self.qgsVectorLayer.setCustomProperty("editablegeocsv_path", path)
         
     def getGeoCsvPath(self):
