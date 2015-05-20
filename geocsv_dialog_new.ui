@@ -86,7 +86,7 @@
     <rect>
      <x>10</x>
      <y>100</y>
-     <width>491</width>
+     <width>621</width>
      <height>131</height>
     </rect>
    </property>
@@ -147,7 +147,7 @@
      <rect>
       <x>210</x>
       <y>10</y>
-      <width>102</width>
+      <width>311</width>
       <height>20</height>
      </rect>
     </property>
@@ -218,6 +218,28 @@
    <zorder>pointTypeWidget</zorder>
    <zorder>pointGeometryTypeRadio</zorder>
    <zorder>wktGeometryTypeRadio</zorder>
+  </widget>
+  <widget class="QLabel" name="helpLabel">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>270</y>
+     <width>59</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>ArrowCursor</cursorShape>
+   </property>
+   <property name="mouseTracking">
+    <bool>false</bool>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://giswiki.hsr.ch/Editable_GeoCSV#Help&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2b84d3;&quot;&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </widget>
  </widget>
  <resources/>

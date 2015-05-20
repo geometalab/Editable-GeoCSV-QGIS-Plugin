@@ -24,7 +24,7 @@ import weakref
 from qgis.core import QgsMapLayerRegistry
 
 from PyQt4.QtGui import QFileDialog
-from PyQt4.Qt import QMessageBox, QApplication
+from PyQt4.Qt import QMessageBox, QApplication, Qt
 
 from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict
 from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory, NotificationHandler
@@ -45,13 +45,16 @@ class GeoCsvNewController:
     def __init__(self):             
         self.geometryFieldUpdate = False
         self.csvtFileIsDirty = False
-        self.newDialog = GeoCsvDialogNew()
+        self.newDialog = GeoCsvDialogNew()        
         
     def createCsvVectorLayer(self, csvVectorLayers, qgsVectorLayer=None, customTitle=None):
         if self.newDialog.isVisible():
             self.newDialog.reject()
         # to prevent the dialog listeners to be attached multiple times, we create a new instance
-        self.newDialog = GeoCsvDialogNew()                    
+        self.newDialog = GeoCsvDialogNew()
+        # enable help hyperlink
+        self.newDialog.helpLabel.setOpenExternalLinks(True)
+                            
         self.dataSourceHandler = None
         self.vectorDescriptor = None 
         self.csvtFileIsDirty = False           
