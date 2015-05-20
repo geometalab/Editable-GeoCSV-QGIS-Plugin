@@ -7,10 +7,10 @@
 # This file should be included when you package your plugin.# Mandatory items:
 
 [general]
-name=GeoCSV Editor
+name=Editable GeoCSV
 qgisMinimumVersion=2.0
 description=Load, edit and save GeoCSV files
-version=0.2
+version=0.9
 author=geometalab
 email=geometalab@gmail.com
 
@@ -22,13 +22,13 @@ email=geometalab@gmail.com
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=
+tags=csv, table, import, geocoding
 
-homepage=
-tracker=
-repository=
+homepage=https://github.com/geometalab/Editable-GeoCSV-QGIS-Plugin
+tracker=https://github.com/geometalab/Editable-GeoCSV-QGIS-Plugin/issues
+repository=https://github.com/geometalab/Editable-GeoCSV-QGIS-Plugin
 category=Plugins
-icon=icon.png
+icon=geocsv.png
 # experimental flag
 experimental=True
 
