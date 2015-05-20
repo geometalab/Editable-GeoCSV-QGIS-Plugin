@@ -118,6 +118,9 @@ class GeoCsvNewController:
             except InvalidDataSourceException:
                 self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'invalid file path'))            
                 self._hideGeometryTypeWidget()
+            except InvalidDelimiterException:
+                self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'invalid delimiter'))
+                self._hideGeometryTypeWidget()
             else:
                 self._createVectorDescriptorFromCsvt()
                 self._showGeometryTypeWidget()     
@@ -128,7 +131,7 @@ class GeoCsvNewController:
     def _updateDataSource(self, csvFilePath):
         try:        
             self.dataSourceHandler = GeoCsvDataSourceHandler(csvFilePath)            
-        except InvalidDataSourceException:
+        except (InvalidDataSourceException, InvalidDelimiterException):
             raise
                                         
     def _createVectorDescriptorFromCsvt(self):
@@ -142,7 +145,7 @@ class GeoCsvNewController:
         except GeoCsvUnknownGeometryTypeException:
             self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'csvt geometry type exception'))            
         except:
-            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'no csvt file found'))
+            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'no csvt file found'))            
         
     def _createVectorDescriptorFromGeometryTypeWidget(self, index):        
         if not self.geometryFieldUpdate:
@@ -324,8 +327,8 @@ class VectorLayerSaveConflictController:
             try:
                 self.csvDataSourceHandler.moveDataSourcesToPath(filePath)
                 self.csvDataSourceHandler.syncFeaturesWithCsv(self.csvVectorLayer().vectorLayerDescriptor, self.features, filePath)
-                self.csvVectorLayer.updateGeoCsvPath(filePath)
-            except:
+                self.csvVectorLayer().updateGeoCsvPath(filePath)
+            except:                
                 QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController', 'Invalid path'), QApplication.translate('VectorLayerSaveConflictController', 'An error occured while trying to save file on new location. Please try again.'))            
         
         

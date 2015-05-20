@@ -30,7 +30,7 @@ from geocsv_model import CsvVectorLayer, GeoCsvAttributeType, PointCsvVectorLaye
 from PyQt4.Qt import QApplication
 
 class GeoCsvVectorLayerFactory:
-     
+         
     @staticmethod
     def createCsvVectorLayer(dataSourceHandler, vectorLayerDescriptor, qgsVectorLayer=None):                
         ':type dataSourceHandler:GeoCsvDataSourceHandler'
@@ -56,6 +56,7 @@ class CsvExcelSemicolonDialect(csv.excel):
     delimiter = ';'
 
 class GeoCsvDataSourceHandler:    
+        
     def __init__(self, pathToCsvFile):
         csv.register_dialect('excel-semicolon', CsvExcelSemicolonDialect)
         try:
@@ -63,10 +64,13 @@ class GeoCsvDataSourceHandler:
             self._csvHasHeader = True
             self._csvDialect = 'excel-semicolon'
             self._csvtDialect = 'excel-semicolon'
-            self._prjDialect = 'excel-semicolon'             
+            self._prjDialect = 'excel-semicolon'     
+            self._examineDataSource()                
         except (FileNotFoundException, UnknownFileFormatException):
             raise InvalidDataSourceException()
-        self._examineDataSource()
+        except:
+            raise InvalidDelimiterException() 
+        
         
     def _examineDataSource(self):
         try :
@@ -197,19 +201,20 @@ class GeoCsvDataSourceHandler:
     
     def syncFeaturesWithCsv(self, vectorLayerDescriptor, features, alternativeSavePath=None):
         ':type vectorLayerDescriptor:CsvVectorLayerDescriptor'
-        try:
+                
+        try:            
             _path = self._fileContainer.pathToCsvFile if not alternativeSavePath else alternativeSavePath
-            with open(_path, 'w+') as csvfile:                
+            with open(_path, 'w+') as csvfile:                                
                 writer = csv.writer(csvfile, dialect=self._csvDialect)
                 attributeNames = [attribute.name for attribute in vectorLayerDescriptor.attributes]
                 # write header row
-                writer.writerow(attributeNames)
+                writer.writerow(attributeNames)                
                 for feature in features:
                     row = []
                     for attribute in attributeNames:
                         row.append(feature[feature.fieldNameIndex(attribute)])
                     writer.writerow([unicode(s).encode("utf-8") for s in row])                
-        except:
+        except:            
             raise FileIOException()      
                             
     def extractAttributeNamesFromCsv(self):
@@ -251,6 +256,7 @@ class GeoCsvDataSourceHandler:
     def updatePrjFile(self, crsWkt):
         with open(self._fileContainer.constructPrjPath(), 'w+') as prjfile:
             prjfile.write(unicode(crsWkt+"\n").encode("utf-8"))
+            self._fileContainer._createPathToPRJ()
             
     def moveDataSourcesToPath(self, newPath):
         try:
@@ -264,6 +270,7 @@ class GeoCsvDataSourceHandler:
                 writer = csv.writer(csvtfile, dialect=self._csvDialect)
                 geoCsvAttributeTypes = [attributeType.toCsvtString() for attributeType in attributeTypes]
                 writer.writerow([unicode(s).encode("utf-8") for s in geoCsvAttributeTypes])
+                self._fileContainer._createPathToCSVT()
         except:
             raise FileIOException() 
                       
@@ -383,10 +390,10 @@ class GeoCsvFileContainer:
         else:
             raise UnknownFileFormatException()
                 
-    def hasCsvt(self):
+    def hasCsvt(self):        
         return self.pathToCsvtFile != ''
     
-    def hasPrj(self):
+    def hasPrj(self):        
         return self.pathToPrj != ''
     
     def constructCsvtPath(self):
@@ -398,11 +405,11 @@ class GeoCsvFileContainer:
     def moveToNewPath(self, newPath):
         newRootPath, newFileExtension = os.path.splitext(newPath)
         if newFileExtension == '.csv' or newFileExtension == '.tsv':
-            shutil.copy(self.pathToCsvFile, newPath)
+            shutil.copyfile(self.pathToCsvFile, newPath)
             if self.hasCsvt():
-                shutil.copy(self.pathToCsvtFile, newRootPath+'.csvt')
+                shutil.copyfile(self.pathToCsvtFile, newRootPath+'.csvt')
             if self.hasPrj():
-                shutil.copy(self.pathToPrj, newRootPath+'.prj')
+                shutil.copyfile(self.pathToPrj, newRootPath+'.prj')
             self._initWithPath(newPath)                
         else:
             raise UnknownFileFormatException()

@@ -33,7 +33,10 @@ class GeoCsvUnknownGeometryTypeException(Exception):
     pass
 
 class InvalidDataSourceException(Exception):
-    pass        
+    pass      
+
+class InvalidDelimiterException(Exception):
+    pass
 
 class FileIOException(Exception):
     pass
