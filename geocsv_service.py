@@ -430,26 +430,24 @@ class NotificationHandler:
         cls._iface = iface
     
     @classmethod    
-    def pushError(cls, title, message):
-        cls._checkConfiguration()
-        cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.CRITICAL, duration=cls._duration)
+    def pushError(cls, title, message, duration=None):
+        cls._checkConfiguration()        
+        cls._pushMessage(title, message, QgsMessageBar.CRITICAL, duration)
         
     @classmethod    
     def pushWarning(cls, title, message, duration=None):
         cls._checkConfiguration()
         cls._pushMessage(title, message, QgsMessageBar.WARNING, duration)
-#         cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.WARNING, duration=cls._duration)
         
     @classmethod  
     def pushSuccess(cls, title, message, duration=None):
         cls._checkConfiguration()
         cls._pushMessage(title, message, QgsMessageBar.SUCCESS, duration)   
-#         cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.SUCCESS, duration=cls._duration)
     
     @classmethod  
-    def pushInfo(cls, title, message):
+    def pushInfo(cls, title, message, duration=None):
         cls._checkConfiguration()
-        cls._iface.messageBar().pushMessage(title,message,level=QgsMessageBar.INFO, duration=cls._duration)
+        cls._pushMessage(title, message, QgsMessageBar.INFO, duration)        
     
     @classmethod  
     def _pushMessage(cls, title, message, messageLevel, duration=None):

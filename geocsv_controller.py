@@ -103,8 +103,7 @@ class GeoCsvNewController:
         csvFilePath = QFileDialog.getOpenFileName(self.newDialog, QApplication.translate('GeoCsvNewController', 'Open GeoCSV File'), '', QApplication.translate('GeoCsvNewController', 'Files (*.csv *.tsv)'))
         if csvFilePath:
             self.newDialog.filePath.setText(csvFilePath)   
-        self.newDialog.activateWindow()
-#         self.newDialog.setFocus()                 
+        self.newDialog.activateWindow()          
                     
     def onFilePathChange(self):
         self.dataSourceHandler = None
@@ -262,7 +261,7 @@ class VectorLayerController:
         try:
             self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())            
         except:
-            NotificationHandler.pushWarning(QApplication.translate('GeoCsvNewController', 'CSVT File Error'), QApplication.translate('GeoCsvNewController', 'An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'),duration=0)            
+            NotificationHandler.pushWarning(QApplication.translate('GeoCsvNewController', 'CSVT File Error'), QApplication.translate('GeoCsvNewController', 'An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'))            
 
     def deleteAttributes(self, attributeIds, vectorLayerDescriptor):
         try:
