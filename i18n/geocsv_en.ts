@@ -163,7 +163,7 @@
     <message>
         <location filename="geocsv_controller.py" line="277"/>
         <source>You tried to delete an attribute which is providing geometry information. The change will not be saved to disk.</source>
-        <translation type="unfinished">You tried to delete an attribute which is providing geometry information. The change will not be saved to disk.</translation>
+        <translation type="unfinished">You deleted an attribute that was providing geometry information. This can lead to unpredictable problems. Please exit edit mode without saving your changes.</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="312"/>

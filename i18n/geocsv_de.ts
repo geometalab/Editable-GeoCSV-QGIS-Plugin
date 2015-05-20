@@ -163,7 +163,7 @@
     <message>
         <location filename="geocsv_controller.py" line="277"/>
         <source>You tried to delete an attribute which is providing geometry information. The change will not be saved to disk.</source>
-        <translation type="unfinished">Das gelöschte Attribut enthält Geometrieangaben. Die Änderungen werden nicht gespeichert.</translation>
+        <translation type="unfinished">Das gelöschte Attribut enthielt Geometrieangaben. Dies kann zu unbestimmten Problemen führen. Bitte verlassen Sie den Editiermodus ohne die Änderungen zu speichern.</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="312"/>
