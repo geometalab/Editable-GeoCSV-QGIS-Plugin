@@ -221,12 +221,12 @@
     <message>
         <location filename="geocsv_dialog_new.ui" line="136"/>
         <source>Point (Easting/Northing)</source>
-        <translation type="unfinished">Point (Easting/Northing)</translation>
+        <translation type="unfinished">Easting/Northing (Point)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="155"/>
         <source>WKT</source>
-        <translation type="unfinished">WKT</translation>
+        <translation type="unfinished">WKT (Point, LineString, Polygon)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="200"/>

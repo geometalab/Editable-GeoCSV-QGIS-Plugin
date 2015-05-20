@@ -29,7 +29,7 @@
     <message>
         <location filename="geocsv_controller.py" line="137"/>
         <source>csv&lt;-&gt;csvt missmatch</source>
-        <translation type="unfinished">csv&lt;-&gt;csvt missmatch</translation>
+        <translation type="unfinished">Notice: csv&lt;-&gt;csvt missmatch</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="139"/>
@@ -39,7 +39,7 @@
     <message>
         <location filename="geocsv_controller.py" line="141"/>
         <source>no csvt file found</source>
-        <translation type="unfinished">no csvt file found</translation>
+        <translation type="unfinished">Notice: No csvt file found</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="165"/>
@@ -221,12 +221,12 @@
     <message>
         <location filename="geocsv_dialog_new.ui" line="136"/>
         <source>Point (Easting/Northing)</source>
-        <translation type="unfinished">Point (Easting/Northing)</translation>
+        <translation type="unfinished">Easting/Northing (Point)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="155"/>
         <source>WKT</source>
-        <translation type="unfinished">WKT</translation>
+        <translation type="unfinished">WKT (Point, LineString, Polygon)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="200"/>
