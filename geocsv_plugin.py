@@ -64,5 +64,4 @@ class EditableGeoCsv:
         self._iface.removePluginMenu(
             QCoreApplication.translate('EditableGeoCsv', 'Editable GeoCSV'),
             self.addGeoCsvLayerAction)
-        self._iface.removeToolBarIcon(self.addGeoCsvLayerAction)        
-        del self.toolbar             
+        self._iface.removeToolBarIcon(self.addGeoCsvLayerAction)
