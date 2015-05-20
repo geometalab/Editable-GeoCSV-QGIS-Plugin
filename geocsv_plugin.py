@@ -27,14 +27,14 @@ import resources_rc
 from geocsv_controller import GeoCsvNewController, GeoCsvReconnectController
 from geocsv_service import NotificationHandler
 
-import sys;
-sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
-import pydevd
+# import sys;
+# sys.path.append(r'/Applications/liclipse/plugins/org.python.pydev_3.9.2.201502042042/pysrc')
+# import pydevd
 
 class EditableGeoCsv:
 
     def __init__(self, iface):          
-        pydevd.settrace()                            
+#         pydevd.settrace()                            
         self._iface = iface        
         self.plugin_dir = os.path.dirname(__file__)        
         locale = QSettings().value('locale/userLocale')[0:2]
@@ -53,13 +53,11 @@ class EditableGeoCsv:
         self._iface.projectRead.connect(lambda: GeoCsvReconnectController.getInstance().reconnectCsvVectorLayers(self.csvVectorLayers))
                                                       
     def initGui(self):
-        self.toolbar = self._iface.addToolBar('geocsveditor')
-        self.toolbar.setObjectName('geocsveditor')        
         addGeoCsvLayerIcon = QIcon(':/plugins/editablegeocsv/geocsv.png')
         addGeoCsvLayerText = QCoreApplication.translate('EditableGeoCsv', 'Add GeoCSV layer')        
         self.addGeoCsvLayerAction = QAction(addGeoCsvLayerIcon, addGeoCsvLayerText, self._iface.mainWindow())
         self.addGeoCsvLayerAction.triggered.connect(lambda: GeoCsvNewController.getInstance().createCsvVectorLayer(self.csvVectorLayers))
-        self.toolbar.addAction(self.addGeoCsvLayerAction)
+        self._iface.addToolBarIcon(self.addGeoCsvLayerAction)
         self._iface.addPluginToMenu(QCoreApplication.translate('EditableGeoCsv', 'Editable GeoCSV'), self.addGeoCsvLayerAction)
                     
     def unload(self):        
