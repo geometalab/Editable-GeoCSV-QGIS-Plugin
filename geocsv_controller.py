@@ -24,8 +24,7 @@ import weakref
 from qgis.core import QgsMapLayerRegistry
 
 from PyQt4.QtGui import QFileDialog
-from PyQt4.Qt import QMessageBox, QApplication, Qt
-
+from PyQt4.Qt import QMessageBox, QApplication
 from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict
 from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory, NotificationHandler
 from geocsv_model import CsvVectorLayerDescriptor, GeoCSVAttribute
@@ -328,6 +327,7 @@ class VectorLayerSaveConflictController:
                 self.csvDataSourceHandler.moveDataSourcesToPath(filePath)
                 self.csvDataSourceHandler.syncFeaturesWithCsv(self.csvVectorLayer().vectorLayerDescriptor, self.features, filePath)
                 self.csvVectorLayer().updateGeoCsvPath(filePath)
+                NotificationHandler.pushSuccess(QApplication.translate('VectorLayerSaveConflictController', 'CSV File updated'), QApplication.translate('VectorLayerSaveConflictController', 'Changes to layer "{}" successfully stored in csv file.').format(self.csvVectorLayer().qgsVectorLayer.name()))
             except:                
                 QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController', 'Invalid path'), QApplication.translate('VectorLayerSaveConflictController', 'An error occured while trying to save file on new location. Please try again.'))            
         
