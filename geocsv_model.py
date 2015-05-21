@@ -257,7 +257,7 @@ class CsvVectorLayer():
     def __init__(self, qgsVectorLayer, vectorLayerDescriptor):           
         ':type qgsVectorLayer: QgsVectorLayer'
         ':type vectorLayerDescriptor CsvVectorLayerDescriptor'        
-        self.initConnections(qgsVectorLayer)                
+        self._initConnections(qgsVectorLayer)                
         self.qgsVectorLayer = qgsVectorLayer        
         self.vectorLayerDescriptor = vectorLayerDescriptor         
         self.dirty = False
@@ -266,7 +266,7 @@ class CsvVectorLayer():
         ':type vectorLayerController VectorLayerController'
         self.vectorLayerController = vectorLayerController
                                   
-    def initConnections(self, qgsVectorLayer):
+    def _initConnections(self, qgsVectorLayer):
         ':type qgsVectorLayer: QgsVectorLayer'        
         qgsVectorLayer.editingStarted.connect(self.editingDidStart)
         qgsVectorLayer.editingStopped.connect(self.editingDidStop) 

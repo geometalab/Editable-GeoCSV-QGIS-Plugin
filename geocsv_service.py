@@ -76,8 +76,16 @@ class GeoCsvDataSourceHandler:
                 queueWriter.writerow(row)
             csvfile.seek(0)    
             csvfile.write(queue.getvalue())
-            csvfile.truncate()                 
-                                                            
+            csvfile.truncate() 
+      
+    @staticmethod      
+    def createBackupFile(pathToFile):        
+        if os.path.isfile(pathToFile):
+            root, ext = os.path.splitext(pathToFile)
+            backupPath = root+'_backup'+ext
+            shutil.copy(pathToFile, backupPath)
+            
+                                                                                            
     def __init__(self, pathToCsvFile, csvEncoding=_csvDefaultEncoding):
         csv.register_dialect('excel-semicolon', CsvExcelSemicolonDialect)
         try:

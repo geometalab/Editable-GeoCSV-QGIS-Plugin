@@ -29,7 +29,6 @@ from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict
 from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory, NotificationHandler
 from geocsv_model import CsvVectorLayerDescriptor, GeoCSVAttribute
 from geocsv_exception import *
-from encodings.aliases import aliases
 
 
 class GeoCsvNewController:
@@ -45,21 +44,18 @@ class GeoCsvNewController:
     def __init__(self):             
         self.geometryFieldUpdate = False
         self.csvtFileIsDirty = False
-        self.newDialog = GeoCsvDialogNew()        
+        self.newDialog = GeoCsvDialogNew() 
+        self._initConnections()
+        self._initVisibility()       
         
     def createCsvVectorLayer(self, csvVectorLayers, qgsVectorLayer=None, customTitle=None):
         if self.newDialog.isVisible():
-            self.newDialog.reject()
-        # to prevent the dialog listeners to be attached multiple times, we create a new instance
-        self.newDialog = GeoCsvDialogNew()
+            self.newDialog.reject()                                
         # enable help hyperlink
-        self.newDialog.helpLabel.setOpenExternalLinks(True)
-                            
+        self.newDialog.helpLabel.setOpenExternalLinks(True)                            
         self.dataSourceHandler = None
         self.vectorDescriptor = None 
-        self.csvtFileIsDirty = False           
-        self.initConnections()
-        self.initVisibility()
+        self.csvtFileIsDirty = False                       
         if customTitle:
             self.newDialog.setWindowTitle(customTitle)
         if qgsVectorLayer:
@@ -67,9 +63,12 @@ class GeoCsvNewController:
             if csvPath:
                 self.newDialog.filePath.setText(csvPath)
         self._updateAcceptButton()
-        self.newDialog.show()
+        self._analyseCsv()
+        self.newDialog.show()        
+        #wait for user input
         result = self.newDialog.exec_()
-        if result:
+        #if user pressed ok
+        if result == 1:
             if self.dataSourceHandler and self.vectorDescriptor:                                
                 csvVectorLayer = GeoCsvVectorLayerFactory.createCsvVectorLayer(self.dataSourceHandler, self.vectorDescriptor, qgsVectorLayer)
                 vectorLayerController = VectorLayerController(csvVectorLayer, self.dataSourceHandler)
@@ -85,11 +84,10 @@ class GeoCsvNewController:
                 if not self.dataSourceHandler.hasPrj():
                     self.dataSourceHandler.updatePrjFile(csvVectorLayer.qgsVectorLayer.crs().toWkt())
                     
-                             
-            
-    def initConnections(self):
-        self.newDialog.fileBrowserButton.clicked.connect(self.onFileBrowserButton)
-        self.newDialog.filePath.textChanged.connect(self.onFilePathChange)
+                                                            
+    def _initConnections(self):
+        self.newDialog.fileBrowserButton.clicked.connect(self._onFileBrowserButton)
+        self.newDialog.filePath.textChanged.connect(self._analyseCsv)
         self.newDialog.acceptButton.clicked.connect(self.newDialog.accept)
         self.newDialog.rejectButton.clicked.connect(self.newDialog.reject)
         self.newDialog.pointGeometryTypeRadio.toggled.connect(self._toggleGeometryType)
@@ -99,55 +97,68 @@ class GeoCsvNewController:
         self.newDialog.wktAttributeDropDown.currentIndexChanged.connect(self._createVectorDescriptorFromGeometryTypeWidget)
         self.newDialog.charsetConvertButton.clicked.connect(self._onCharsetConvert)
         
-    def initVisibility(self):
+    def _initVisibility(self):
         self._hideGeometryTypeWidget() 
         self._toggleGeometryType() 
         self.newDialog.charsetWidget.hide()      
                      
-    def onFileBrowserButton(self):             
-        csvFilePath = QFileDialog.getOpenFileName(self.newDialog, QApplication.translate('GeoCsvNewController', 'Open GeoCSV File'), '', QApplication.translate('GeoCsvNewController', 'Files (*.csv *.tsv)'))
-        if csvFilePath:
-            self.newDialog.filePath.setText(csvFilePath)   
-        self.newDialog.activateWindow()          
-                    
-    def onFilePathChange(self):
+                         
+    def _analyseCsv(self):
         self.dataSourceHandler = None
         self.vectorDescriptor = None
         csvFilePath = self.newDialog.filePath.text()
         if csvFilePath:
             try:                    
                 self._updateDataSource(csvFilePath) 
-                self.newDialog.charsetWidget.hide()               
+                self._hideCharsetWidget()               
             except InvalidDataSourceException:
                 self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'invalid file path'))            
                 self._hideGeometryTypeWidget()
+                self._hideCharsetWidget()
             except InvalidDelimiterException:
                 self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'invalid delimiter'))
                 self._hideGeometryTypeWidget()
-            except UnicodeDecodeError:                
+                self._hideCharsetWidget()
+            except UnicodeDecodeError:
+                self._hideGeometryTypeWidget()                
                 self._onCharsetError()                            
             else:
                 self._createVectorDescriptorFromCsvt()
+                self._hideCharsetWidget()
                 self._showGeometryTypeWidget()     
         else:            
             self.newDialog.statusNotificationLabel.setText("")
         self._updateAcceptButton()
+
+    def _onFileBrowserButton(self):             
+        csvFilePath = QFileDialog.getOpenFileName(self.newDialog, QApplication.translate('GeoCsvNewController', 'Open GeoCSV File'), '', QApplication.translate('GeoCsvNewController', 'Files (*.csv *.tsv)'))
+        if csvFilePath:
+            self.newDialog.filePath.setText(csvFilePath)   
+        self.newDialog.activateWindow()  
         
     def _onCharsetError(self):    
         self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'not utf8 encoded'))            
         self.newDialog.charsetDropDown.addItems(CharsetList.charsetList)
-        self.newDialog.charsetDropDown.setCurrentIndex(CharsetList.charsetList.index("latin_1"))
-        self.newDialog.charsetWidget.show()
+        self.newDialog.charsetDropDown.setCurrentIndex(CharsetList.charsetList.index("latin_1"))        
+        self._showCharsetWidget()
 
     def _onCharsetConvert(self):
         csvFilePath = self.newDialog.filePath.text()
         encoding = self.newDialog.charsetDropDown.currentText()
         try:
+            GeoCsvDataSourceHandler.createBackupFile(csvFilePath)
+            NotificationHandler.pushInfo(QApplication.translate('GeoCsvNewController', 'backup created'), QApplication.translate('GeoCsvNewController', 'Created backup on "{}"').format(csvFilePath))
             GeoCsvDataSourceHandler.convertFileToUTF8(csvFilePath, encoding)
-            self.onFilePathChange()
+            NotificationHandler.pushSuccess(QApplication.translate('GeoCsvNewController', 'Converted'), QApplication.translate('GeoCsvNewController', 'Successfully converted to utf-8'))
+            self._analyseCsv()
         except:
             self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'error in converting'))
-            
+    
+    def _hideCharsetWidget(self):
+        self.newDialog.charsetWidget.hide()
+    
+    def _showCharsetWidget(self):
+        self.newDialog.charsetWidget.show()
                        
     def _updateDataSource(self, csvFilePath, csvEncoding=None):
         try:        
