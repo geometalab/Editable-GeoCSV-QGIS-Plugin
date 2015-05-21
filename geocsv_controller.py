@@ -192,7 +192,7 @@ class GeoCsvNewController:
                             self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvPointVectorDescriptor(self.newDialog.eastingAttributeDropDown.currentIndex() - 1, self.newDialog.northingAttributeDropDown.currentIndex() - 1)                                                     
                     else:                    
                         self.vectorDescriptor = self.dataSourceHandler.manuallyCreateCsvWktVectorDescriptor(self.newDialog.wktAttributeDropDown.currentIndex() - 1)
-                except:
+                except:                    
                     self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'error in geometry selection'))
                 if self.vectorDescriptor:
                     self.csvtFileIsDirty = True     
@@ -293,7 +293,7 @@ class VectorLayerController:
             self.csvDataSourceHandler.syncFeaturesWithCsv(vectorLayerDescriptor, features)
             NotificationHandler.pushSuccess(QApplication.translate('VectorLayerController', 'CSV File updated'), QApplication.translate('VectorLayerController', 'Changes to layer "{}" successfully stored in csv file.').format(self.csvVectorLayer().qgsVectorLayer.name()))            
             return True
-        except Exception as e:                       
+        except:                       
             VectorLayerSaveConflictController(self.csvVectorLayer(), self.csvDataSourceHandler).handleConflict()
             return False
         
@@ -303,14 +303,14 @@ class VectorLayerController:
             vectorLayerDescriptor.addAttribute(GeoCSVAttribute.createFromQgsField(attribute))
         try:
             self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())            
-        except Exception as e:
+        except:
             NotificationHandler.pushWarning(QApplication.translate('GeoCsvNewController', 'CSVT File Error'), QApplication.translate('GeoCsvNewController', 'An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'))            
 
     def deleteAttributes(self, attributeIds, vectorLayerDescriptor):
         try:
             for attributeId in attributeIds:
                 vectorLayerDescriptor.deleteAttributeAtIndex(attributeId)
-        except Exception as e:
+        except:
             QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController', 'Error while updating attributes happend'), QApplication.translate('VectorLayerSaveConflictController', 'An error occured while trying to update the attributes list. Nothing has been stored on disk.'))
         else:
             try:

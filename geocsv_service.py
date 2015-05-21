@@ -19,8 +19,8 @@ email                : geometalab@gmail.com
  ***************************************************************************/
 """
 
-import csv
 import os
+import csv
 import shutil
 import codecs
 import cStringIO
@@ -89,13 +89,12 @@ class GeoCsvDataSourceHandler:
             self._csvDialect = 'excel-semicolon'
             self._csvtDialect = 'excel-semicolon'
             self._prjDialect = 'excel-semicolon'            
-            self._examineDataSource()                                                                                            
+            self._examineDataSource()                                                                                                    
         except (FileNotFoundException, UnknownFileFormatException) as e:
             raise InvalidDataSourceException()
         except (InvalidDelimiterException, UnicodeDecodeError):
-            raise        
-        
-        
+            raise                
+                
     def _examineDataSource(self):
         try :
             with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:
@@ -107,8 +106,8 @@ class GeoCsvDataSourceHandler:
                 csvfile.seek(0)
                 reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
                 for row in reader:
-                    pass                                                
-        except (UnicodeDecodeError, InvalidDelimiterException):
+                    pass                                                                                     
+        except (UnicodeDecodeError, InvalidDelimiterException):            
             raise        
             
         
@@ -156,11 +155,11 @@ class GeoCsvDataSourceHandler:
     def manuallyCreateCsvPointVectorDescriptor(self, eastingIndex, northingIndex):                                
         firstDataRow = None
         try:
-            firstRow = self.getSampleRowsFromCSV(1)
+            firstRow = self.getSampleRowsFromCSV(1)             
             if len(firstRow) == 0:
                 raise GeoCsvUnknownGeometryTypeException()
             firstDataRow = firstRow[0]
-        except (GeoCsvUnknownGeometryTypeException, FileIOException):
+        except (GeoCsvUnknownGeometryTypeException, FileIOException) as e:            
             raise         
         
         attributeTypes = self._extractGeoCsvAttributeTypesFromFirstDataRow(firstDataRow)
@@ -172,7 +171,7 @@ class GeoCsvDataSourceHandler:
         attributes = None
         try:
             attributes = self._createGeoCSVAttributes(attributeTypes)
-        except CsvCsvtMissmatchException, FileIOException:
+        except (CsvCsvtMissmatchException, FileIOException) as e:            
             raise
         
         descriptor = None
@@ -181,7 +180,7 @@ class GeoCsvDataSourceHandler:
         except (GeoCsvMultipleGeoAttributeException,
                 GeoCsvMalformedGeoAttributeException,
                 GeoCsvUnknownGeometryTypeException,
-                FileIOException):
+                FileIOException) as e:            
             raise        
         return descriptor         
           
@@ -204,7 +203,7 @@ class GeoCsvDataSourceHandler:
         attributes = None
         try:
             attributes = self._createGeoCSVAttributes(attributeTypes)
-        except CsvCsvtMissmatchException, FileIOException:
+        except (CsvCsvtMissmatchException, FileIOException):
             raise
         
         descriptor = None
@@ -252,7 +251,7 @@ class GeoCsvDataSourceHandler:
                             #there is a qgis bug related to improper attribute deleteion
                             raise                                                                        
                     writer.writerow(row)                
-        except Exception as e:            
+        except:            
             raise FileIOException()      
                             
     def extractAttributeNamesFromCsv(self):
@@ -260,7 +259,7 @@ class GeoCsvDataSourceHandler:
         try :
             with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:               
                 reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
-                firstRow = reader.next()
+                firstRow = reader.next()                
                 for i, val in enumerate(firstRow):
                     if self._csvHasHeader:
                         attributeNames.append(val)
@@ -271,14 +270,14 @@ class GeoCsvDataSourceHandler:
         return attributeNames
         
     def getSampleRowsFromCSV(self, maxRows=3):
-        try :
-            with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:
+        try :                                    
+            with open(self._fileContainer.pathToCsvFile, 'r') as csvfile:                
                 reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
                 if self._csvHasHeader:
                     reader.next()                    
                 rowCounter = 0   
                 rows = [] 
-                row = reader.next()                                               
+                row = reader.next()                                                            
                 while row and rowCounter < maxRows:
                     rows.append(row)
                     rowCounter += 1
@@ -287,7 +286,7 @@ class GeoCsvDataSourceHandler:
                     except StopIteration:
                         pass
                 return rows
-        except:                      
+        except:                                             
             raise FileIOException()
 
 
