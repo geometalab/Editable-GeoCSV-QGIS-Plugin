@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>646</width>
-    <height>299</height>
+    <width>647</width>
+    <height>325</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -218,6 +218,7 @@
    <zorder>pointTypeWidget</zorder>
    <zorder>pointGeometryTypeRadio</zorder>
    <zorder>wktGeometryTypeRadio</zorder>
+   <zorder>charsetWidget</zorder>
   </widget>
   <widget class="QLabel" name="helpLabel">
    <property name="geometry">
@@ -232,7 +233,7 @@
     <cursorShape>ArrowCursor</cursorShape>
    </property>
    <property name="mouseTracking">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="focusPolicy">
     <enum>Qt::NoFocus</enum>
@@ -240,6 +241,62 @@
    <property name="text">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://giswiki.hsr.ch/Editable_GeoCSV#Help&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2b84d3;&quot;&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+  </widget>
+  <widget class="QWidget" name="charsetWidget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>90</y>
+     <width>581</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <widget class="QWidget" name="gridLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>411</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="1">
+      <widget class="QComboBox" name="charsetDropDown"/>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="charsetConvertButton">
+       <property name="text">
+        <string>Convert</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Character set:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>471</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>The csv File is not in UTF-8. Please convert it first
+ (CAUTION: the original file will be overwritten):</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

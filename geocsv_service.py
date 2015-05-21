@@ -63,26 +63,33 @@ class CsvExcelSemicolonDialect(csv.excel):
 
 class GeoCsvDataSourceHandler:    
          
-    _csvDefaultEncoding = 'utf-8'               
-    _csvFallbackEncoding = 'iso-8859-1'
+    _csvDefaultEncoding = 'utf-8'  
+    
+    @staticmethod
+    def convertFileToUTF8(pathToFile, sourceEncoding):
+        csv.register_dialect('excel-semicolon', CsvExcelSemicolonDialect)
+        with open(pathToFile, 'r+') as csvfile:
+            queue = cStringIO.StringIO()
+            reader = UnicodeReader(csvfile, dialect='excel-semicolon', encoding=sourceEncoding)
+            queueWriter = UnicodeWriter(queue, dialect='excel-semicolon') 
+            for row in reader:
+                queueWriter.writerow(row)
+            csvfile.seek(0)    
+            csvfile.write(queue.getvalue())
+            csvfile.truncate()                 
                                                             
-    def __init__(self, pathToCsvFile):
+    def __init__(self, pathToCsvFile, csvEncoding=_csvDefaultEncoding):
         csv.register_dialect('excel-semicolon', CsvExcelSemicolonDialect)
         try:
             self._fileContainer = GeoCsvFileContainer(pathToCsvFile)
             self._csvHasHeader = True
             self._csvDialect = 'excel-semicolon'
             self._csvtDialect = 'excel-semicolon'
-            self._prjDialect = 'excel-semicolon'
-            self._csvEncoding = self._csvDefaultEncoding
-            try:
-                self._examineDataSource()
-            except UnicodeDecodeError:
-                self._csvEncoding = self._csvFallbackEncoding
-                self._examineDataSource()                                                                                         
+            self._prjDialect = 'excel-semicolon'            
+            self._examineDataSource()                                                                                            
         except (FileNotFoundException, UnknownFileFormatException):
             raise InvalidDataSourceException()
-        except (InvalidDelimiterException,UnicodeDecodeError):
+        except (InvalidDelimiterException, UnicodeDecodeError):
             raise        
         
         
@@ -91,14 +98,15 @@ class GeoCsvDataSourceHandler:
             with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:
                 self._csvHasHeader = csv.Sniffer().has_header(csvfile.read(4096))
                 csvfile.seek(0)                
-                reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvEncoding)
+                reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
                 for row in reader:
                     pass                                                
         except UnicodeDecodeError:
             raise
         except:
             raise InvalidDelimiterException()
-                
+        
+                                
     def hasCsvt(self):
         return self._fileContainer.hasCsvt()
     
@@ -207,7 +215,7 @@ class GeoCsvDataSourceHandler:
         ':type vectorLayerDescriptor:CsvVectorLayerDescriptor'
         features = []
         with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:            
-                reader = UnicodeReader(csvfile, dialect=self._csvDialect,encoding=self._csvEncoding)
+                reader = UnicodeReader(csvfile, dialect=self._csvDialect,encoding=self._csvDefaultEncoding)
                 if self._csvHasHeader:
                     reader.next()                 
                 for row in reader:
@@ -225,7 +233,7 @@ class GeoCsvDataSourceHandler:
         try:            
             _path = self._fileContainer.pathToCsvFile if not alternativeSavePath else alternativeSavePath
             with open(_path, 'w+') as csvfile:                                
-                writer = UnicodeWriter(csvfile, dialect=self._csvDialect, encoding=self._csvEncoding)
+                writer = UnicodeWriter(csvfile, dialect=self._csvDialect)
                 attributeNames = [attribute.name for attribute in vectorLayerDescriptor.attributes]
                 # write header row
                 writer.writerow(attributeNames)                
@@ -234,14 +242,14 @@ class GeoCsvDataSourceHandler:
                     for attribute in attributeNames:
                         row.append(feature[feature.fieldNameIndex(attribute)])                    
                     writer.writerow(row)                
-        except:            
+        except Exception as e:            
             raise FileIOException()      
                             
     def extractAttributeNamesFromCsv(self):
         attributeNames = []
         try :
             with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:               
-                reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvEncoding)
+                reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
                 firstRow = reader.next()
                 for i, val in enumerate(firstRow):
                     if self._csvHasHeader:
@@ -255,7 +263,7 @@ class GeoCsvDataSourceHandler:
     def getSampleRowsFromCSV(self, maxRows=3):
         try :
             with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:
-                reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvEncoding)
+                reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
                 if self._csvHasHeader:
                     reader.next()                    
                 rowCounter = 0   
@@ -494,7 +502,7 @@ class UTF8Recoder:
     def __iter__(self):
         return self
 
-    def next(self):
+    def next(self):        
         return self.reader.next().encode("utf-8")
                           
 class UnicodeReader:
@@ -508,7 +516,7 @@ class UnicodeReader:
         try:
             row = self.reader.next()
         except UnicodeDecodeError:
-            raise
+            raise        
         return [unicode(s, "utf-8") for s in row]
 
     def __iter__(self):
@@ -516,27 +524,12 @@ class UnicodeReader:
 
 class UnicodeWriter:
     
-    def __init__(self, f, dialect=csv.excel, encoding="utf-8", **kwds):
-        # Redirect output to a queue
-        self.queue = cStringIO.StringIO()
-        self.writer = csv.writer(self.queue, dialect=dialect, **kwds)
-        self.stream = f        
-        self.encoder = codecs.getincrementalencoder(encoding)()
-        self.encoding = encoding
+    def __init__(self, f, dialect=csv.excel):                
+        self.writer = csv.writer(f, dialect=dialect)        
 
     def writerow(self, row):        
-        self.writer.writerow([unicode(s).encode("utf-8") for s in row])
-        # Fetch UTF-8 output from the queue ...
-        data = self.queue.getvalue()
-        data = data.decode("utf-8")
-        # ... and reencode it into the target encoding
-        data = self.encoder.encode(data)
-        # write to the target stream
-        self.stream.write(data)
-        # empty queue
-        self.queue.truncate(0)
+        self.writer.writerow([unicode(s).encode("utf-8") for s in row])        
 
     def writerows(self, rows):
         for row in rows:
-            self.writerow(row) 
-        
+            self.writerow(row)                                        

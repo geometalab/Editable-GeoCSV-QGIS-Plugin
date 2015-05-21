@@ -17,37 +17,37 @@
 <context>
     <name>GeoCsvNewController</name>
     <message>
-        <location filename="geocsv_controller.py" line="119"/>
+        <location filename="geocsv_controller.py" line="122"/>
         <source>invalid file path</source>
         <translation>Der angegebene Pfad ist ungültig</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="142"/>
+        <location filename="geocsv_controller.py" line="163"/>
         <source>unknown csvt attribute: {}</source>
         <translation>Ungültiges csvt Attribut: {}</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="144"/>
+        <location filename="geocsv_controller.py" line="165"/>
         <source>csv&lt;-&gt;csvt missmatch</source>
         <translation>Das CSVT-Schema passt nicht zum angegeben CSV-File</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="146"/>
+        <location filename="geocsv_controller.py" line="167"/>
         <source>csvt geometry type exception</source>
         <translation>Falsche Geometrieangaben</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="148"/>
+        <location filename="geocsv_controller.py" line="169"/>
         <source>no csvt file found</source>
         <translation>Kein CSVT-File gefunden</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="172"/>
+        <location filename="geocsv_controller.py" line="193"/>
         <source>error while loading csv</source>
         <translation>Fehler beim laden des CSV-Files</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="162"/>
+        <location filename="geocsv_controller.py" line="183"/>
         <source>error in geometry selection</source>
         <translation>Fehler in den Geometrieangaben</translation>
     </message>
@@ -62,17 +62,17 @@
         <translation>Der layer &quot;{}&quot; wurde erfolgreich erstellt</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="106"/>
+        <location filename="geocsv_controller.py" line="108"/>
         <source>Open GeoCSV File</source>
         <translation>GeoCSV Dokument öffnen</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="106"/>
+        <location filename="geocsv_controller.py" line="108"/>
         <source>Files (*.csv *.tsv)</source>
         <translation>Dokumente (*.csv *.tsv)</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="270"/>
+        <location filename="geocsv_controller.py" line="294"/>
         <source>CSVT File Error</source>
         <translation>Fehler in CSVT File</translation>
     </message>
@@ -82,30 +82,40 @@
         <translation>Das CSVT File konnte nicht aktualisiert werden.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="270"/>
+        <location filename="geocsv_controller.py" line="294"/>
         <source>An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.</source>
         <translation>Fehler beim Aktualisieren des CSVT Files. Bitte aktualisieren Sie das CSVT File manuell.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="122"/>
+        <location filename="geocsv_controller.py" line="125"/>
         <source>invalid delimiter</source>
         <translation>Fehlerhaftes Trennzeichen im CSV File.</translation>
+    </message>
+    <message>
+        <location filename="geocsv_controller.py" line="137"/>
+        <source>not utf8 encoded</source>
+        <translation>Das csv File ist nicht UTF-8 kodiert.</translation>
+    </message>
+    <message>
+        <location filename="geocsv_controller.py" line="149"/>
+        <source>error in converting</source>
+        <translation>Die Konvertierung ist Fehlgeschlagen. Bitte manuell in UTF-8 kodieren.</translation>
     </message>
 </context>
 <context>
     <name>GeoCsvReconnectController</name>
     <message>
-        <location filename="geocsv_controller.py" line="245"/>
+        <location filename="geocsv_controller.py" line="269"/>
         <source>Couldn&apos;t automatically restore csv layer &quot;{}&quot;</source>
         <translation>Fehlende Angaben für den GeoCSV-Layer {}</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="243"/>
+        <location filename="geocsv_controller.py" line="267"/>
         <source>GeoCSV Layer reconnected</source>
         <translation>GeoCSV Layer erfolgreich geladen</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="243"/>
+        <location filename="geocsv_controller.py" line="267"/>
         <source>Layer &quot;{}&quot; is successfully reconnected</source>
         <translation>Der Layer &quot;{}&quot; wurde erfolgreich geladen</translation>
     </message>
@@ -113,12 +123,12 @@
 <context>
     <name>VectorLayerController</name>
     <message>
-        <location filename="geocsv_controller.py" line="257"/>
+        <location filename="geocsv_controller.py" line="281"/>
         <source>CSV File updated</source>
         <translation>CSV Dokument aktualisiert</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="257"/>
+        <location filename="geocsv_controller.py" line="281"/>
         <source>Changes to layer &quot;{}&quot; successfully stored in csv file.</source>
         <translation>Änderungen im layer &quot;{}&quot; wurden erfolgreich gespeichert. </translation>
     </message>
@@ -126,62 +136,62 @@
 <context>
     <name>VectorLayerSaveConflictController</name>
     <message>
-        <location filename="geocsv_controller.py" line="333"/>
+        <location filename="geocsv_controller.py" line="357"/>
         <source>Invalid path</source>
         <translation>Der angegebene Pfad ist ungültig</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="333"/>
+        <location filename="geocsv_controller.py" line="357"/>
         <source>An error occured while trying to save file on new location. Please try again.</source>
         <translation>Beim Versuch, das Dokument am neuen Ort zu speichern, ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="282"/>
+        <location filename="geocsv_controller.py" line="306"/>
         <source>CSVT file could not be updated</source>
         <translation>CSVT Dokument konnte nicht aktualisiert werden</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="282"/>
+        <location filename="geocsv_controller.py" line="306"/>
         <source>An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.</source>
         <translation>Fehler beim Aktualisieren des CSVT Files. Bitte aktualisieren Sie das CSVT File manuell.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="277"/>
+        <location filename="geocsv_controller.py" line="301"/>
         <source>Error while updating attributes happend</source>
         <translation>Fehler beim Aktualisieren der Attribute aufgetreten</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="277"/>
+        <location filename="geocsv_controller.py" line="301"/>
         <source>An error occured while trying to update the attributes list. Nothing has been stored on disk.</source>
         <translation>Beim Versuch, die Attributliste zu aktualisieren, ist ein Fehler aufgetreten. Es wurde nichts gespeichert.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="287"/>
+        <location filename="geocsv_controller.py" line="311"/>
         <source>Geometry index violation</source>
         <translation>Fehler in den Geometrie-Angaben</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="287"/>
+        <location filename="geocsv_controller.py" line="311"/>
         <source>You tried to delete an attribute which is providing geometry information. The change will not be saved to disk.</source>
         <translation>Das gelöschte Attribut enthielt Geometrieangaben. Dies kann zu unbestimmten Problemen führen. Bitte verlassen Sie den Editiermodus ohne die Änderungen zu speichern.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="324"/>
+        <location filename="geocsv_controller.py" line="348"/>
         <source>Files (*.csv *.tsv)</source>
         <translation>Dokumente (*.csv *.tsv)</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="331"/>
+        <location filename="geocsv_controller.py" line="355"/>
         <source>CSV File updated</source>
         <translation>CSV Dokument aktualisiert</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="331"/>
+        <location filename="geocsv_controller.py" line="355"/>
         <source>Changes to layer &quot;{}&quot; successfully stored in csv file.</source>
         <translation>Änderungen im layer &quot;{}&quot; wurden erfolgreich gespeichert. </translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="324"/>
+        <location filename="geocsv_controller.py" line="348"/>
         <source>Save File</source>
         <translation>Dokument speichern</translation>
     </message>
@@ -206,7 +216,7 @@
     <message>
         <location filename="geocsv_dialog_conflict.ui" line="43"/>
         <source>Save As</source>
-        <translation type="unfinished">Speichern unter...</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_conflict.ui" line="59"/>
@@ -231,7 +241,7 @@
     <message>
         <location filename="geocsv_dialog_new.ui" line="122"/>
         <source>WKT Field</source>
-        <translation type="unfinished">WKT Feld</translation>
+        <translation>WKT Feld</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="136"/>
@@ -241,7 +251,7 @@
     <message>
         <location filename="geocsv_dialog_new.ui" line="155"/>
         <source>WKT</source>
-        <translation type="unfinished">WKT (Point, LineString, Polygon)</translation>
+        <translation>WKT (Point, LineString, Polygon)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="200"/>
@@ -254,9 +264,25 @@
         <translation>Northing Feld</translation>
     </message>
     <message>
-        <location filename="geocsv_dialog_new.ui" line="241"/>
+        <location filename="geocsv_dialog_new.ui" line="242"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://giswiki.hsr.ch/Editable_GeoCSV#Help&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2b84d3;&quot;&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="geocsv_dialog_new.ui" line="270"/>
+        <source>Convert</source>
+        <translation>Konvertieren</translation>
+    </message>
+    <message>
+        <location filename="geocsv_dialog_new.ui" line="277"/>
+        <source>Character set:</source>
+        <translation>Zeichensatz:</translation>
+    </message>
+    <message>
+        <location filename="geocsv_dialog_new.ui" line="293"/>
+        <source>The csv File is not in UTF-8. Please convert it first
+ (CAUTION: the original file will be overwritten):</source>
+        <translation type="unfinished">Das csv Dokument ist nicht UTF-8 kodiert. Bitte zuerst konvertieren. (ACHTUNG: Das Originaldokument wird dabei überschrieben!)</translation>
     </message>
 </context>
 </TS>
