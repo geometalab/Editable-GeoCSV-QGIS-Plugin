@@ -161,14 +161,16 @@ class CsvVectorLayerDescriptor:
     def getAttributeTypes(self):
         attributeTypes = []
         for attribute in self.attributes:
-            attributeTypes.append(attribute.type)
+            if attribute is not None:
+                attributeTypes.append(attribute.type)
         return attributeTypes
     
     def getAttributesAsQgsFields(self):
         fields = []
         # : :type attribute: GeoCSVAttribute
-        for attribute in self.attributes:            
-            fields.append(attribute.createQgsField())
+        for attribute in self.attributes: 
+            if attribute is not None:           
+                fields.append(attribute.createQgsField())
         return fields
     
     def addAttribute(self, geoCsvAttribute):
@@ -178,7 +180,7 @@ class CsvVectorLayerDescriptor:
     def deleteAttributeAtIndex(self, index):                
         try:
             if not self.indexIsGeoemtryIndex(index):
-                del self.attributes[index]
+                self.attributes[index] = None
         except:
             raise
         

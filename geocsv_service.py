@@ -242,13 +242,17 @@ class GeoCsvDataSourceHandler:
             _path = self._fileContainer.pathToCsvFile if not alternativeSavePath else alternativeSavePath
             with open(_path, 'w+') as csvfile:                                
                 writer = UnicodeWriter(csvfile, dialect=self._csvDialect)
-                attributeNames = [attribute.name for attribute in vectorLayerDescriptor.attributes]
+                attributeNames = [attribute.name for attribute in vectorLayerDescriptor.attributes if attribute is not None]
                 # write header row
                 writer.writerow(attributeNames)                
                 for feature in features:
                     row = []
-                    for attribute in attributeNames:
-                        row.append(feature[feature.fieldNameIndex(attribute)])                    
+                    for attribute in attributeNames:                        
+                        try:
+                            row.append(feature[feature.fieldNameIndex(attribute)])
+                        except KeyError:
+                            #there is a qgis bug related to improper attribute deletion
+                            raise                                                                        
                     writer.writerow(row)                
         except Exception as e:            
             raise FileIOException()      
@@ -415,15 +419,14 @@ class GeoCsvFileContainer:
         if not os.path.isfile(pathToCsvFile):
             raise FileNotFoundException()
         self.rootPath, fileExtension = os.path.splitext(pathToCsvFile)
-        if fileExtension == '.csv' or fileExtension == '.tsv':
+        if fileExtension == '.csvz':
+            #ToDo
+            pass
+        else:
             self.pathToCsvFile = pathToCsvFile
             self._createPathToCSVT()
             self._createPathToPRJ()
-            self._createFileName()
-        elif fileExtension == '.csvz':
-            pass
-        else:
-            raise UnknownFileFormatException()
+            self._createFileName()        
                 
     def hasCsvt(self):        
         return self.pathToCsvtFile != ''
@@ -438,16 +441,13 @@ class GeoCsvFileContainer:
         return self.rootPath +'.prj'
     
     def moveToNewPath(self, newPath):
-        newRootPath, newFileExtension = os.path.splitext(newPath)
-        if newFileExtension == '.csv' or newFileExtension == '.tsv':
-            shutil.copyfile(self.pathToCsvFile, newPath)
-            if self.hasCsvt():
-                shutil.copyfile(self.pathToCsvtFile, newRootPath+'.csvt')
-            if self.hasPrj():
-                shutil.copyfile(self.pathToPrj, newRootPath+'.prj')
-            self._initWithPath(newPath)                
-        else:
-            raise UnknownFileFormatException()
+        newRootPath, newFileExtension = os.path.splitext(newPath)        
+        shutil.copyfile(self.pathToCsvFile, newPath)
+        if self.hasCsvt():
+            shutil.copyfile(self.pathToCsvtFile, newRootPath+'.csvt')
+        if self.hasPrj():
+            shutil.copyfile(self.pathToPrj, newRootPath+'.prj')
+        self._initWithPath(newPath)                        
                         
     def _createPathToCSVT(self):
         self.pathToCsvtFile = ""
