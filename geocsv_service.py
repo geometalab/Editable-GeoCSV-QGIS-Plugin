@@ -265,7 +265,7 @@ class GeoCsvDataSourceHandler:
                     if self._csvHasHeader:
                         attributeNames.append(val)
                     else:
-                        attributeNames.append('field ' + str(i + 1))
+                        attributeNames.append('Field ' + str(i + 1))
         except:
             raise FileIOException()
         return attributeNames

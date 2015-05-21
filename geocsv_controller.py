@@ -79,10 +79,12 @@ class GeoCsvNewController:
                 if self.csvtFileIsDirty:
                     try:
                         self.dataSourceHandler.updateCsvtFile(self.vectorDescriptor.getAttributeTypes())
+                        NotificationHandler.pushInfo(QApplication.translate('GeoCsvNewController', 'CSVT File created/updated.'), QApplication.translate('GeoCsvNewController', 'The CSVT file was successfully created/updated on disk.'))
                     except FileIOException:                                                
                         NotificationHandler.pushWarning(QApplication.translate('GeoCsvNewController', 'CSVT File Error'), QApplication.translate('GeoCsvNewController', 'The csvt file couldn\'t be updated on disk.'))         
                 if not self.dataSourceHandler.hasPrj():
                     self.dataSourceHandler.updatePrjFile(csvVectorLayer.qgsVectorLayer.crs().toWkt())
+                    NotificationHandler.pushInfo(QApplication.translate('GeoCsvNewController', 'PRJ File created.'), QApplication.translate('GeoCsvNewController', 'The PRJ file was successfully created on disk.'))
                     
                                                             
     def _initConnections(self):
