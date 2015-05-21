@@ -139,7 +139,7 @@
     <message>
         <location filename="geocsv_controller.py" line="87"/>
         <source>The PRJ file was successfully created on disk.</source>
-        <translation type="unfinished">Das PRJ-File wurde erstellt.</translation>
+        <translation>Das PRJ-File wurde erstellt.</translation>
     </message>
 </context>
 <context>

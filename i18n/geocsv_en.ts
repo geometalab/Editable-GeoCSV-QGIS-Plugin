@@ -129,7 +129,7 @@
     <message>
         <location filename="geocsv_controller.py" line="82"/>
         <source>The CSVT file was successfully created/updated on disk.</source>
-        <translation type="unfinished">The CSVT file has been created/updated.</translation>
+        <translation>The CSVT file has been created/updated.</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="87"/>
@@ -139,7 +139,7 @@
     <message>
         <location filename="geocsv_controller.py" line="87"/>
         <source>The PRJ file was successfully created on disk.</source>
-        <translation type="unfinished">The PRJ file has been created.</translation>
+        <translation>The PRJ file has been created.</translation>
     </message>
 </context>
 <context>
