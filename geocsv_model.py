@@ -279,10 +279,12 @@ class CsvVectorLayer():
         qgsVectorLayer.attributeDeleted.connect(self.checkAttributeDeleted)
         qgsVectorLayer.committedAttributesAdded.connect(self.attributesAdded)
         qgsVectorLayer.committedAttributesDeleted.connect(self.attributesDeleted)
+        qgsVectorLayer.committedAttributeValuesChanges.connect(self.attributesValueChanged)
         
     def editingDidStart(self):
         self.qgsVectorLayer.editBuffer().committedAttributesAdded.connect(self.attributesAdded)
         self.qgsVectorLayer.editBuffer().committedAttributesDeleted.connect(self.attributesDeleted)
+        self.qgsVectorLayer.editBuffer().committedAttributeValuesChanges.connect(self.attributesValueChanged)
     
     def editingDidStop(self):
         if self.dirty:
@@ -296,6 +298,9 @@ class CsvVectorLayer():
     def featuresRemoved(self, layer, featureIds):
         self.dirty = True
         
+    def attributesValueChanged(self, layerId, changedValues):
+        self.dirty = True
+        
     def attributesAdded(self, layerId, attributes):
         self.vectorLayerController.addAttributes(attributes, self.vectorLayerDescriptor)
         self.dirty = True
@@ -304,12 +309,12 @@ class CsvVectorLayer():
         self.vectorLayerController.deleteAttributes(attributeIds, self.vectorLayerDescriptor) 
         self.dirty = True
         
+        
     def checkAttributeDeleted(self, attributeId):
         if not self.vectorLayerController.checkDeleteAttribute(attributeId, self.vectorLayerDescriptor):
             pass
 #             self.qgsVectorLayer.rollBack()
-            
-                
+                            
     def geometryChanged(self, featureId, geometry):
         feature = self.qgsVectorLayer.getFeatures(QgsFeatureRequest(featureId)).next()
         self.vectorLayerDescriptor.updateGeoAttributes(self.qgsVectorLayer, feature)
