@@ -36,7 +36,8 @@ class InvalidDataSourceException(Exception):
     pass      
 
 class InvalidDelimiterException(Exception):
-    pass
+    def __init__(self, expectedDelimiter):
+        self.expectedDelimiter = expectedDelimiter
 
 class FileIOException(Exception):
     pass

@@ -82,11 +82,6 @@
         <translation>An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="119"/>
-        <source>invalid delimiter</source>
-        <translation>Unknown delimiter found in csv file.</translation>
-    </message>
-    <message>
         <location filename="geocsv_controller.py" line="140"/>
         <source>not utf8 encoded</source>
         <translation>The csv file is not UTF-8 encoded.</translation>
@@ -119,7 +114,12 @@
     <message>
         <location filename="geocsv_controller.py" line="134"/>
         <source>Files (*.csv *.tsv *.*)</source>
-        <translation type="unfinished">Files (*.csv *.tsv *.*)</translation>
+        <translation>Files (*.csv *.tsv *.*)</translation>
+    </message>
+    <message>
+        <location filename="geocsv_controller.py" line="119"/>
+        <source>invalid delimiter. expected &quot;{}&quot;</source>
+        <translation>Erroneous delimiter detected. The delimiter should be a &quot;{}&quot;.</translation>
     </message>
 </context>
 <context>
@@ -213,7 +213,7 @@
     <message>
         <location filename="geocsv_controller.py" line="359"/>
         <source>Files (*.csv *.tsv *.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Files (*.csv *.tsv *.*)</translation>
     </message>
 </context>
 <context>

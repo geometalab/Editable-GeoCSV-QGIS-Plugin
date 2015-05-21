@@ -90,7 +90,7 @@ class GeoCsvDataSourceHandler:
             self._csvtDialect = 'excel-semicolon'
             self._prjDialect = 'excel-semicolon'            
             self._examineDataSource()                                                                                            
-        except (FileNotFoundException, UnknownFileFormatException):
+        except (FileNotFoundException, UnknownFileFormatException) as e:
             raise InvalidDataSourceException()
         except (InvalidDelimiterException, UnicodeDecodeError):
             raise        
@@ -100,14 +100,17 @@ class GeoCsvDataSourceHandler:
         try :
             with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:
                 self._csvHasHeader = csv.Sniffer().has_header(csvfile.read(4096))
-                csvfile.seek(0)                
+                csvfile.seek(0)     
+                sniffedDialect = csv.Sniffer().sniff(csvfile.read(4096))
+                if not sniffedDialect.delimiter == csv.get_dialect(self._csvDialect).delimiter:
+                    raise InvalidDelimiterException(csv.get_dialect(self._csvDialect).delimiter)
+                csvfile.seek(0)
                 reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
                 for row in reader:
                     pass                                                
-        except UnicodeDecodeError:
-            raise
-        except:
-            raise InvalidDelimiterException()
+        except (UnicodeDecodeError, InvalidDelimiterException):
+            raise        
+            
         
                                 
     def hasCsvt(self):
@@ -262,7 +265,7 @@ class GeoCsvDataSourceHandler:
                     if self._csvHasHeader:
                         attributeNames.append(val)
                     else:
-                        attributeNames.append('field' + (i + 1))
+                        attributeNames.append('field ' + str(i + 1))
         except:
             raise FileIOException()
         return attributeNames

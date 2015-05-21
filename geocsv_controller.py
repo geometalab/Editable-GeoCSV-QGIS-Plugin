@@ -111,12 +111,12 @@ class GeoCsvNewController:
             try:                    
                 self._updateDataSource(csvFilePath) 
                 self._hideCharsetWidget()               
-            except InvalidDataSourceException:
+            except InvalidDataSourceException as e:
                 self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'invalid file path'))            
                 self._hideGeometryTypeWidget()
                 self._hideCharsetWidget()
-            except InvalidDelimiterException:
-                self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'invalid delimiter'))
+            except InvalidDelimiterException as e:
+                self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'invalid delimiter. expected "{}"').format(e.expectedDelimiter))
                 self._hideGeometryTypeWidget()
                 self._hideCharsetWidget()
             except UnicodeDecodeError:

@@ -44,7 +44,7 @@
     <message>
         <location filename="geocsv_controller.py" line="204"/>
         <source>error while loading csv</source>
-        <translation>Fehler beim laden des CSV-Files</translation>
+        <translation type="unfinished">Fehler beim Laden des CSV-Files</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="194"/>
@@ -82,11 +82,6 @@
         <translation>Fehler beim Aktualisieren des CSVT Files. Bitte aktualisieren Sie das CSVT File manuell.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="119"/>
-        <source>invalid delimiter</source>
-        <translation>Fehlerhaftes Trennzeichen im CSV File.</translation>
-    </message>
-    <message>
         <location filename="geocsv_controller.py" line="140"/>
         <source>not utf8 encoded</source>
         <translation>Das csv File ist nicht UTF-8 kodiert.</translation>
@@ -119,7 +114,12 @@
     <message>
         <location filename="geocsv_controller.py" line="134"/>
         <source>Files (*.csv *.tsv *.*)</source>
-        <translation type="unfinished">Dokumente (*.csv *.tsv *.*)</translation>
+        <translation>Dokumente (*.csv *.tsv *.*)</translation>
+    </message>
+    <message>
+        <location filename="geocsv_controller.py" line="119"/>
+        <source>invalid delimiter. expected &quot;{}&quot;</source>
+        <translation>Fehlerhaftes Trennzeichen in CSV Dokument. Laut GeoCSV-Spec wird ein &quot;{}&quot; erwartet.</translation>
     </message>
 </context>
 <context>
@@ -213,7 +213,7 @@
     <message>
         <location filename="geocsv_controller.py" line="359"/>
         <source>Files (*.csv *.tsv *.*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Dokumente (*.csv *.tsv *.*)</translation>
     </message>
 </context>
 <context>
