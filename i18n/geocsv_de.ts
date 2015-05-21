@@ -22,32 +22,32 @@
         <translation>Der angegebene Pfad ist ungültig</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="166"/>
+        <location filename="geocsv_controller.py" line="174"/>
         <source>unknown csvt attribute: {}</source>
         <translation>Ungültiges csvt Attribut: {}</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="168"/>
+        <location filename="geocsv_controller.py" line="176"/>
         <source>csv&lt;-&gt;csvt missmatch</source>
         <translation>Das CSVT-Schema passt nicht zum angegeben CSV-File</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="170"/>
+        <location filename="geocsv_controller.py" line="178"/>
         <source>csvt geometry type exception</source>
         <translation>Falsche Geometrieangaben</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="172"/>
+        <location filename="geocsv_controller.py" line="180"/>
         <source>no csvt file found</source>
         <translation>Kein CSVT-File gefunden</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="196"/>
+        <location filename="geocsv_controller.py" line="204"/>
         <source>error while loading csv</source>
         <translation>Fehler beim laden des CSV-Files</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="186"/>
+        <location filename="geocsv_controller.py" line="194"/>
         <source>error in geometry selection</source>
         <translation>Fehler in den Geometrieangaben</translation>
     </message>
@@ -62,17 +62,12 @@
         <translation>Der layer &quot;{}&quot; wurde erfolgreich erstellt</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="130"/>
+        <location filename="geocsv_controller.py" line="134"/>
         <source>Open GeoCSV File</source>
         <translation>GeoCSV Dokument öffnen</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="130"/>
-        <source>Files (*.csv *.tsv)</source>
-        <translation>Dokumente (*.csv *.tsv)</translation>
-    </message>
-    <message>
-        <location filename="geocsv_controller.py" line="297"/>
+        <location filename="geocsv_controller.py" line="305"/>
         <source>CSVT File Error</source>
         <translation>Fehler in CSVT File</translation>
     </message>
@@ -82,60 +77,65 @@
         <translation>Das CSVT File konnte nicht aktualisiert werden.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="297"/>
+        <location filename="geocsv_controller.py" line="305"/>
         <source>An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.</source>
         <translation>Fehler beim Aktualisieren des CSVT Files. Bitte aktualisieren Sie das CSVT File manuell.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="118"/>
+        <location filename="geocsv_controller.py" line="119"/>
         <source>invalid delimiter</source>
         <translation>Fehlerhaftes Trennzeichen im CSV File.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="136"/>
+        <location filename="geocsv_controller.py" line="140"/>
         <source>not utf8 encoded</source>
         <translation>Das csv File ist nicht UTF-8 kodiert.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="152"/>
+        <location filename="geocsv_controller.py" line="155"/>
         <source>error in converting</source>
         <translation>Die Konvertierung ist Fehlgeschlagen. Bitte manuell in UTF-8 kodieren.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="147"/>
+        <location filename="geocsv_controller.py" line="150"/>
         <source>backup created</source>
-        <translation type="unfinished">Backup erstellt</translation>
+        <translation>Backup erstellt</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="147"/>
+        <location filename="geocsv_controller.py" line="150"/>
         <source>Created backup on &quot;{}&quot;</source>
-        <translation type="unfinished">Backup unter &quot;{}&quot; erstellt. </translation>
+        <translation>Backup unter &quot;{}&quot; erstellt. </translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="149"/>
+        <location filename="geocsv_controller.py" line="152"/>
         <source>Converted</source>
-        <translation type="unfinished">Konvertiert</translation>
+        <translation>Konvertiert</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="149"/>
+        <location filename="geocsv_controller.py" line="152"/>
         <source>Successfully converted to utf-8</source>
-        <translation type="unfinished">CSV wurde erfolgreich nach utf-8 konvertiert.</translation>
+        <translation>CSV wurde erfolgreich nach utf-8 konvertiert.</translation>
+    </message>
+    <message>
+        <location filename="geocsv_controller.py" line="134"/>
+        <source>Files (*.csv *.tsv *.*)</source>
+        <translation type="unfinished">Dokumente (*.csv *.tsv *.*)</translation>
     </message>
 </context>
 <context>
     <name>GeoCsvReconnectController</name>
     <message>
-        <location filename="geocsv_controller.py" line="272"/>
+        <location filename="geocsv_controller.py" line="280"/>
         <source>Couldn&apos;t automatically restore csv layer &quot;{}&quot;</source>
         <translation>Fehlende Angaben für den GeoCSV-Layer {}</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="270"/>
+        <location filename="geocsv_controller.py" line="278"/>
         <source>GeoCSV Layer reconnected</source>
         <translation>GeoCSV Layer erfolgreich geladen</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="270"/>
+        <location filename="geocsv_controller.py" line="278"/>
         <source>Layer &quot;{}&quot; is successfully reconnected</source>
         <translation>Der Layer &quot;{}&quot; wurde erfolgreich geladen</translation>
     </message>
@@ -143,12 +143,12 @@
 <context>
     <name>VectorLayerController</name>
     <message>
-        <location filename="geocsv_controller.py" line="284"/>
+        <location filename="geocsv_controller.py" line="292"/>
         <source>CSV File updated</source>
         <translation>CSV Dokument aktualisiert</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="284"/>
+        <location filename="geocsv_controller.py" line="292"/>
         <source>Changes to layer &quot;{}&quot; successfully stored in csv file.</source>
         <translation>Änderungen im layer &quot;{}&quot; wurden erfolgreich gespeichert. </translation>
     </message>
@@ -156,64 +156,64 @@
 <context>
     <name>VectorLayerSaveConflictController</name>
     <message>
-        <location filename="geocsv_controller.py" line="360"/>
+        <location filename="geocsv_controller.py" line="368"/>
         <source>Invalid path</source>
         <translation>Der angegebene Pfad ist ungültig</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="360"/>
+        <location filename="geocsv_controller.py" line="368"/>
         <source>An error occured while trying to save file on new location. Please try again.</source>
         <translation>Beim Versuch, das Dokument am neuen Ort zu speichern, ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="309"/>
+        <location filename="geocsv_controller.py" line="317"/>
         <source>CSVT file could not be updated</source>
         <translation>CSVT Dokument konnte nicht aktualisiert werden</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="309"/>
+        <location filename="geocsv_controller.py" line="317"/>
         <source>An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.</source>
         <translation>Fehler beim Aktualisieren des CSVT Files. Bitte aktualisieren Sie das CSVT File manuell.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="304"/>
+        <location filename="geocsv_controller.py" line="312"/>
         <source>Error while updating attributes happend</source>
         <translation>Fehler beim Aktualisieren der Attribute aufgetreten</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="304"/>
+        <location filename="geocsv_controller.py" line="312"/>
         <source>An error occured while trying to update the attributes list. Nothing has been stored on disk.</source>
         <translation>Beim Versuch, die Attributliste zu aktualisieren, ist ein Fehler aufgetreten. Es wurde nichts gespeichert.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="314"/>
+        <location filename="geocsv_controller.py" line="322"/>
         <source>Geometry index violation</source>
         <translation>Fehler in den Geometrie-Angaben</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="314"/>
+        <location filename="geocsv_controller.py" line="322"/>
         <source>You tried to delete an attribute which is providing geometry information. The change will not be saved to disk.</source>
         <translation>Das gelöschte Attribut enthielt Geometrieangaben. Dies kann zu unbestimmten Problemen führen. Bitte verlassen Sie den Editiermodus ohne die Änderungen zu speichern.</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="351"/>
-        <source>Files (*.csv *.tsv)</source>
-        <translation>Dokumente (*.csv *.tsv)</translation>
-    </message>
-    <message>
-        <location filename="geocsv_controller.py" line="358"/>
+        <location filename="geocsv_controller.py" line="366"/>
         <source>CSV File updated</source>
         <translation>CSV Dokument aktualisiert</translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="358"/>
+        <location filename="geocsv_controller.py" line="366"/>
         <source>Changes to layer &quot;{}&quot; successfully stored in csv file.</source>
         <translation>Änderungen im layer &quot;{}&quot; wurden erfolgreich gespeichert. </translation>
     </message>
     <message>
-        <location filename="geocsv_controller.py" line="351"/>
+        <location filename="geocsv_controller.py" line="359"/>
         <source>Save File</source>
         <translation>Dokument speichern</translation>
+    </message>
+    <message>
+        <location filename="geocsv_controller.py" line="359"/>
+        <source>Files (*.csv *.tsv *.*)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

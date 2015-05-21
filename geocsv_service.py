@@ -31,12 +31,7 @@ from geocsv_exception import *
 from geocsv_model import CsvVectorLayer, GeoCsvAttributeType, PointCsvVectorLayerDescriptor, WktCsvVectorLayerDescriptor, GeoCSVAttribute
 
 class GeoCsvVectorLayerFactory:
-       
-    @staticmethod
-    def utf8encoder(unicode_csv_data):        
-        for line in unicode_csv_data:
-            yield line.encode('utf-8')  
-         
+                      
     @staticmethod
     def createCsvVectorLayer(dataSourceHandler, vectorLayerDescriptor, qgsVectorLayer=None):                
         ':type dataSourceHandler:GeoCsvDataSourceHandler'
@@ -251,7 +246,7 @@ class GeoCsvDataSourceHandler:
                         try:
                             row.append(feature[feature.fieldNameIndex(attribute)])
                         except KeyError:
-                            #there is a qgis bug related to improper attribute deletion
+                            #there is a qgis bug related to improper attribute deleteion
                             raise                                                                        
                     writer.writerow(row)                
         except Exception as e:            
@@ -426,8 +421,8 @@ class GeoCsvFileContainer:
             self.pathToCsvFile = pathToCsvFile
             self._createPathToCSVT()
             self._createPathToPRJ()
-            self._createFileName()        
-                
+            self._createFileName()
+                    
     def hasCsvt(self):        
         return self.pathToCsvtFile != ''
     
@@ -447,8 +442,8 @@ class GeoCsvFileContainer:
             shutil.copyfile(self.pathToCsvtFile, newRootPath+'.csvt')
         if self.hasPrj():
             shutil.copyfile(self.pathToPrj, newRootPath+'.prj')
-        self._initWithPath(newPath)                        
-                        
+        self._initWithPath(newPath)                
+                                
     def _createPathToCSVT(self):
         self.pathToCsvtFile = ""
         if os.path.exists(self.rootPath + '.csvt'):

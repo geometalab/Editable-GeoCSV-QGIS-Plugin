@@ -131,7 +131,7 @@ class GeoCsvNewController:
         self._updateAcceptButton()
 
     def _onFileBrowserButton(self):             
-        csvFilePath = QFileDialog.getOpenFileName(self.newDialog, QApplication.translate('GeoCsvNewController', 'Open GeoCSV File'), '', QApplication.translate('GeoCsvNewController', 'Files (*.csv *.tsv)'))
+        csvFilePath = QFileDialog.getOpenFileName(self.newDialog, QApplication.translate('GeoCsvNewController', 'Open GeoCSV File'), '', QApplication.translate('GeoCsvNewController', 'Files (*.csv *.tsv *.*)'))
         if csvFilePath:
             self.newDialog.filePath.setText(csvFilePath)   
         self.newDialog.activateWindow()  
