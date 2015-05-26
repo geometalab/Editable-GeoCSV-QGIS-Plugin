@@ -199,7 +199,7 @@ class GeoCsvDataSourceHandler:
         attributeTypes = self._extractGeoCsvAttributeTypesFromFirstDataRow(firstDataRow)
         if not wktIndex < len(attributeTypes):
             raise GeoCsvUnknownGeometryTypeException()                
-        attributeTypes[wktIndex] = GeoCsvAttributeType(GeoCsvAttributeType.attributeType["wkt"][0])
+        attributeTypes[wktIndex] = GeoCsvAttributeType(GeoCsvAttributeType.wkt)
         
         attributes = None
         try:
