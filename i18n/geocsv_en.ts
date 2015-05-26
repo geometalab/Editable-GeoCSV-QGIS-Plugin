@@ -149,7 +149,7 @@
     <message>
         <location filename="geocsv_controller.py" line="182"/>
         <source>csvt file contains too many geo attributes</source>
-        <translation type="unfinished">CSVT file contains too many geo attributes. Please set manually.</translation>
+        <translation>CSVT file contains too many geo attributes. Please set manually.</translation>
     </message>
 </context>
 <context>
