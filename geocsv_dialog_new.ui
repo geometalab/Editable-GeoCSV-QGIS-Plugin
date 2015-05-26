@@ -58,35 +58,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="horizontalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>400</x>
-     <y>230</y>
-     <width>232</width>
-     <height>80</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QPushButton" name="rejectButton">
-      <property name="text">
-       <string>Cancel</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="acceptButton">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string>Ok</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWidget" name="geometryWidget" native="true">
    <property name="geometry">
     <rect>
@@ -224,29 +195,6 @@
    <zorder>pointTypeWidget</zorder>
    <zorder>pointGeometryTypeRadio</zorder>
    <zorder>wktGeometryTypeRadio</zorder>
-   <zorder>charsetWidget</zorder>
-  </widget>
-  <widget class="QLabel" name="helpLabel">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>270</y>
-     <width>59</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="cursor">
-    <cursorShape>ArrowCursor</cursorShape>
-   </property>
-   <property name="mouseTracking">
-    <bool>true</bool>
-   </property>
-   <property name="focusPolicy">
-    <enum>Qt::NoFocus</enum>
-   </property>
-   <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://giswiki.hsr.ch/Editable_GeoCSV#Help&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2b84d3;&quot;&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
   </widget>
   <widget class="QWidget" name="charsetWidget" native="true">
    <property name="geometry">
@@ -303,6 +251,55 @@
      <bool>true</bool>
     </property>
    </widget>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>230</y>
+     <width>611</width>
+     <height>80</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QLabel" name="helpLabel">
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://giswiki.hsr.ch/Editable_GeoCSV#Help&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#2b84d3;&quot;&gt;Help&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="rejectButton">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="acceptButton">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string>Ok</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
