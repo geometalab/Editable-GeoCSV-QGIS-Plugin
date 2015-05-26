@@ -90,7 +90,7 @@ class GeoCsvDataSourceHandler:
             self._csvtDialect = 'excel-semicolon'
             self._prjDialect = 'excel-semicolon'            
             self._examineDataSource()                                                                                                    
-        except (FileNotFoundException, UnknownFileFormatException) as e:
+        except (FileNotFoundException, UnknownFileFormatException):
             raise InvalidDataSourceException()
         except (InvalidDelimiterException, UnicodeDecodeError):
             raise                
@@ -105,6 +105,7 @@ class GeoCsvDataSourceHandler:
                     raise InvalidDelimiterException(csv.get_dialect(self._csvDialect).delimiter)
                 csvfile.seek(0)
                 reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
+                #to see if all rows can be read in the csvDefaultEncoding encoding, we need to iterate over the list
                 for row in reader:
                     pass                                                                                     
         except (UnicodeDecodeError, InvalidDelimiterException):            
@@ -127,7 +128,7 @@ class GeoCsvDataSourceHandler:
         attributeTypes = None
         try:
             attributeTypes = self._extractGeoCsvAttributeTypesFromCsvt()
-        except (GeoCsvUnknownAttributeException, FileIOException):
+        except (GeoCsvUnknownAttributeException, GeoCsvMalformedGeoAttributeException, FileIOException):
             raise
         attributes = None            
         try:
@@ -159,19 +160,19 @@ class GeoCsvDataSourceHandler:
             if len(firstRow) == 0:
                 raise GeoCsvUnknownGeometryTypeException()
             firstDataRow = firstRow[0]
-        except (GeoCsvUnknownGeometryTypeException, FileIOException) as e:            
+        except (GeoCsvUnknownGeometryTypeException, FileIOException):            
             raise         
         
         attributeTypes = self._extractGeoCsvAttributeTypesFromFirstDataRow(firstDataRow)
         if not eastingIndex < len(attributeTypes) or not northingIndex < len(attributeTypes):
             raise GeoCsvUnknownGeometryTypeException()                
         attributeTypes[eastingIndex] = GeoCsvAttributeType(GeoCsvAttributeType.easting)
-        attributeTypes[northingIndex] = GeoCsvAttributeType(GeoCsvAttributeType.northing)   
+        attributeTypes[northingIndex] = GeoCsvAttributeType(GeoCsvAttributeType.northing)
         
         attributes = None
         try:
             attributes = self._createGeoCSVAttributes(attributeTypes)
-        except (CsvCsvtMissmatchException, FileIOException) as e:            
+        except (CsvCsvtMissmatchException, FileIOException):            
             raise
         
         descriptor = None
@@ -180,7 +181,7 @@ class GeoCsvDataSourceHandler:
         except (GeoCsvMultipleGeoAttributeException,
                 GeoCsvMalformedGeoAttributeException,
                 GeoCsvUnknownGeometryTypeException,
-                FileIOException) as e:            
+                FileIOException):            
             raise        
         return descriptor         
           
@@ -198,7 +199,7 @@ class GeoCsvDataSourceHandler:
         attributeTypes = self._extractGeoCsvAttributeTypesFromFirstDataRow(firstDataRow)
         if not wktIndex < len(attributeTypes):
             raise GeoCsvUnknownGeometryTypeException()                
-        attributeTypes[wktIndex] = GeoCsvAttributeType(GeoCsvAttributeType.wkt)
+        attributeTypes[wktIndex] = GeoCsvAttributeType(GeoCsvAttributeType.attributeType["wkt"][0])
         
         attributes = None
         try:
@@ -322,7 +323,7 @@ class GeoCsvDataSourceHandler:
                 for csvtString in typeRow:
                     attributeTypes.append(GeoCsvAttributeType.fromCsvtString(csvtString))
             return attributeTypes      
-        except GeoCsvUnknownAttributeException:
+        except (GeoCsvUnknownAttributeException, GeoCsvMalformedGeoAttributeException):
             raise        
         except:
             raise FileIOException()

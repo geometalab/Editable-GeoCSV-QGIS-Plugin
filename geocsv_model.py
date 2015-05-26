@@ -22,7 +22,7 @@ email                : geometalab@gmail.com
 from qgis.core import QgsField, QgsGeometry, QgsPoint, QgsFeatureRequest
 from PyQt4.QtCore import QVariant
 
-from geocsv_exception import GeoCsvUnknownGeometryTypeException,GeoCsvUnknownAttributeException
+from geocsv_exception import GeoCsvUnknownGeometryTypeException,GeoCsvUnknownAttributeException, GeoCsvMalformedGeoAttributeException
 from PyQt4.Qt import QMetaType
 
 class GeometryType:
@@ -38,22 +38,40 @@ class GeometryType:
     # http://qgis.org/api/group__core.html#ga09947eb19394302eeeed44d3e81dd74b
     # Qgis::GeoemtryType    
     convertFromQgisGeometryType = {0:point, 1:lineString, 2:polygon}
-    
-class GeoCsvAttributeType:        
+        
+     
+class GeoCsvAttributeType: 
     integer = "integer"
-    real = "real"
+    real = "real" 
     string = "string"
     date = "date"
     time = "time"
-    dateTime = "datetime"
+    dateTime = "dateTime"
     easting = "easting"
     northing = "northing"
     wkt = "wkt"
     
+    #aliases
+    attributeTypes = {
+        integer:["Integer"],
+        real: ["Real"],
+        string:["String"],
+        date: ["Date"],
+        time: ["Time"],
+        dateTime: ["DateTime"],        
+        easting: ["CoordX","Easting","Point"],        
+        northing: ["CoordY","Northing","Point"],
+        wkt: ["WKT"]            
+    }
+                            
     def __init__(self, attributeType, length=0, precision=0):
-        if not attributeType.lower() in GeoCsvAttributeType.__dict__.values():
+        _attributeType = None
+        for keyType, valueList in self.attributeTypes.iteritems():
+            if attributeType.lower() in [s.lower() for s in valueList]:
+                _attributeType = keyType
+        if not _attributeType:
             raise GeoCsvUnknownAttributeException(attributeType)  
-        self.attributeType = attributeType
+        self.attributeType = _attributeType
         self.length = length
         self.precision = precision
     
@@ -68,17 +86,26 @@ class GeoCsvAttributeType:
             if not openBracketIndex == -1:
                 closingBracketIndex = csvtString.find(')')
                 if closingBracketIndex == -1:
-                    raise GeoCsvUnknownAttributeException                                                        
+                    raise GeoCsvMalformedGeoAttributeException()                                                        
                 attributeType = csvtString[0:openBracketIndex]
-                additionalInfo = csvtString[openBracketIndex+1:closingBracketIndex]
+                additionalInfo = csvtString[openBracketIndex+1:closingBracketIndex]                
                 splittedAddionalInfo = additionalInfo.split('.')
                 try:
                     if splittedAddionalInfo[0]:
-                        length = int(splittedAddionalInfo[0])
+                        if attributeType.lower() == "point":
+                            if splittedAddionalInfo[0].lower() == "x":
+                                attributeType = 'coordx'
+                            elif splittedAddionalInfo[0].lower() == "y":
+                                attributeType = 'coordy'
+                            else:
+                                raise GeoCsvUnknownAttributeException()                                
+                        else:
+                            length = int(splittedAddionalInfo[0])
                     if len(splittedAddionalInfo) == 2:
                         precision = int(splittedAddionalInfo[1])
                 except ValueError:
-                    raise GeoCsvUnknownAttributeException
+                    #if it cant't be parsed into an int, it is probably another csvt subtype. 
+                    pass
             else:
                 attributeType = csvtString 
             return GeoCsvAttributeType(attributeType, length, precision)
@@ -95,7 +122,7 @@ class GeoCsvAttributeType:
             additionalInfo += str(self.precision)
         if additionalInfo:
             additionalInfo = '('+additionalInfo+')'
-        return self.attributeType.capitalize() + additionalInfo        
+        return GeoCsvAttributeType.attributeTypes[self.attributeType][0] + additionalInfo        
                             
 class GeoCSVAttribute:
     def __init__(self, attributeType, attributeName):        

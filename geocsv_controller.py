@@ -173,9 +173,13 @@ class GeoCsvNewController:
             self.vectorDescriptor = self.dataSourceHandler.createCsvVectorDescriptorFromCsvt()
             self.newDialog.statusNotificationLabel.setText("")                
         except GeoCsvUnknownAttributeException as e:
-            self.newDialog.statusNotificationLabel.setTsext(QApplication.translate('GeoCsvNewController', 'unknown csvt attribute: {}').format(e.attributeName))            
+            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'unknown csvt attribute: {}').format(e.attributeName))            
         except CsvCsvtMissmatchException:
-            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'csv<->csvt missmatch'))        
+            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'csv<->csvt missmatch'))    
+        except GeoCsvMalformedGeoAttributeException:
+            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'csvt file contains incorrect geo attributes'))
+        except GeoCsvMultipleGeoAttributeException:
+            self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'csvt file contains too many geo attributes'))
         except GeoCsvUnknownGeometryTypeException:
             self.newDialog.statusNotificationLabel.setText(QApplication.translate('GeoCsvNewController', 'csvt geometry type exception'))            
         except:
