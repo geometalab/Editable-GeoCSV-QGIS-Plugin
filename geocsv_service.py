@@ -87,7 +87,7 @@ class GeoCsvDataSourceHandler:
             self._fileContainer = GeoCsvFileContainer(pathToCsvFile)
             self._csvHasHeader = True
             self._csvDialect = 'excel-semicolon'
-            self._csvtDialect = 'excel-semicolon'
+            self._csvtDialect = 'excel'
             self._prjDialect = 'excel-semicolon'            
             self._examineDataSource()                                                                                                    
         except (FileNotFoundException, UnknownFileFormatException):
@@ -305,7 +305,7 @@ class GeoCsvDataSourceHandler:
     def updateCsvtFile(self, attributeTypes):
         try: 
             with open(self._fileContainer.constructCsvtPath(), "w+") as csvtfile:                 
-                writer = UnicodeWriter(csvtfile, dialect=self._csvDialect)
+                writer = UnicodeWriter(csvtfile, dialect=self._csvtDialect)
                 geoCsvAttributeTypes = [attributeType.toCsvtString() for attributeType in attributeTypes]
                 writer.writerow([unicode(s).encode("utf-8") for s in geoCsvAttributeTypes])
                 self._fileContainer._createPathToCSVT()
