@@ -3,7 +3,7 @@
 name=Editable GeoCSV
 qgisMinimumVersion=2.0
 description=Load, edit and save GeoCSV files
-version=0.8.1
+version=0.8.2
 author=geometalab
 email=geometalab@gmail.com
 
