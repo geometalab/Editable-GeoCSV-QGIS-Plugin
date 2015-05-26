@@ -1,4 +1,4 @@
-EGID;GKODX;GKODY;DSTR;DEINR;DSTR_NR
-190036810;647355;248040;Ahornwegl;1;Ahornweg 1
-3123861;647348;248022;Ahornweg;10;Ahornweg 10
-3123858;647377;248022;Ahornweg;11;Ahornweg 11
+id;name;amount;city;lon;lat
+1;Kevin;2.1;Rapperswil;8.8249;47.2274
+2;Eva;2.2;Zürich;8.5435;47.3768
+3;"Jimmy;Muff";2.3;;7.4397;46.9487
