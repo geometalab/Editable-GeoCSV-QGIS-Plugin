@@ -306,7 +306,8 @@ class VectorLayerController:
             # : :type attribute: QgsField  
             vectorLayerDescriptor.addAttribute(GeoCSVAttribute.createFromQgsField(attribute))
         try:
-            self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())            
+            self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())
+            NotificationHandler.pushInfo(QApplication.translate('GeoCsvNewController', 'CSVT File created/updated.'), QApplication.translate('GeoCsvNewController', 'The CSVT file was successfully created/updated on disk.'))            
         except:
             NotificationHandler.pushWarning(QApplication.translate('GeoCsvNewController', 'CSVT File Error'), QApplication.translate('GeoCsvNewController', 'An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'))            
 
@@ -319,6 +320,7 @@ class VectorLayerController:
         else:
             try:
                 self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())
+                NotificationHandler.pushInfo(QApplication.translate('GeoCsvNewController', 'CSVT File created/updated.'), QApplication.translate('GeoCsvNewController', 'The CSVT file was successfully created/updated on disk.'))
             except:
                 QMessageBox.information(None, QApplication.translate('VectorLayerSaveConflictController', 'CSVT file could not be updated'), QApplication.translate('VectorLayerSaveConflictController', 'An error occured while trying to update the CSVT file according to the new attribute types. Please update the csvt file manually.'))
                 
