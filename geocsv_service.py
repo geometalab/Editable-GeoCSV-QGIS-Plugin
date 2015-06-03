@@ -510,7 +510,11 @@ class UTF8Recoder:
         return self
 
     def next(self):        
-        return self.reader.next().encode("utf-8")
+        return self._removeBOM(self.reader.next().encode("utf-8"))
+    
+    def _removeBOM(self, line):
+        #remove byte order mark form file if exists
+        return line[3:] if line.startswith(codecs.BOM_UTF8) else line
                           
 class UnicodeReader:
 
