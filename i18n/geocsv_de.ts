@@ -332,7 +332,7 @@
         <location filename="geocsv_dialog_new.ui" line="247"/>
         <source>The csv File is not in UTF-8. Please convert it first
  (CAUTION: the original file will be overwritten):</source>
-        <translation>Die CDV-Datei ist nicht UTF-8 kodiert. Bitte die ursprüngliche Kodierung angeben (Hinweis: Es wird eine Backup-Datei erstellt und die Datei überschrieben).</translation>
+        <translation>Die CSV-Datei ist nicht UTF-8 kodiert. Bitte die ursprüngliche Kodierung angeben (Hinweis: Es wird eine Backup-Datei erstellt und die Datei überschrieben).</translation>
     </message>
 </context>
 </TS>
