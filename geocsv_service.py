@@ -21,6 +21,7 @@ email                : geometalab@gmail.com
 
 import os
 import csv
+import sys
 import shutil
 import codecs
 import cStringIO
@@ -83,6 +84,7 @@ class GeoCsvDataSourceHandler:
                                                                                             
     def __init__(self, pathToCsvFile, csvEncoding=_csvDefaultEncoding):
         csv.register_dialect('excel-semicolon', CsvExcelSemicolonDialect)
+        csv.field_size_limit(sys.maxsize)
         try:
             self._fileContainer = GeoCsvFileContainer(pathToCsvFile)
             self._csvHasHeader = True
@@ -92,23 +94,22 @@ class GeoCsvDataSourceHandler:
             self._examineDataSource()                                                                                                    
         except (FileNotFoundException, UnknownFileFormatException):
             raise InvalidDataSourceException()
-        except (InvalidDelimiterException, UnicodeDecodeError):
+        except UnicodeDecodeError:
             raise                
                 
     def _examineDataSource(self):
         try :
             with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:
-                self._csvHasHeader = csv.Sniffer().has_header(csvfile.read(4096))
-                csvfile.seek(0)     
-                sniffedDialect = csv.Sniffer().sniff(csvfile.read(4096))
-                if not sniffedDialect.delimiter == csv.get_dialect(self._csvDialect).delimiter:
-                    raise InvalidDelimiterException(csv.get_dialect(self._csvDialect).delimiter)
-                csvfile.seek(0)
+                try:
+                    self._csvHasHeader = csv.Sniffer().has_header(csvfile.read(4096))
+                    csvfile.seek(0)
+                except:
+                    pass     
                 reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
                 #to see if all rows can be read in the csvDefaultEncoding encoding, we need to iterate over the list
                 for row in reader:
                     pass                                                                                     
-        except (UnicodeDecodeError, InvalidDelimiterException):            
+        except UnicodeDecodeError:            
             raise        
             
         
