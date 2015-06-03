@@ -182,7 +182,8 @@ class CsvVectorLayerDescriptor:
     def configureAndValidateWithSampleRow(self, row):
         raise NotImplementedError("must be implemented")
     
-    def indexIsGeoemtryIndex(self, attributeIndex):
+    #ToDo Typo
+    def indexIsGeometryIndex(self, attributeIndex):
         raise NotImplementedError("must be implemented")
     
     def getAttributeTypes(self):
@@ -206,7 +207,7 @@ class CsvVectorLayerDescriptor:
         
     def deleteAttributeAtIndex(self, index):                
         try:
-            if not self.indexIsGeoemtryIndex(index):
+            if not self.indexIsGeometryIndex(index):
                 self.attributes[index] = None
         except:
             raise
@@ -240,7 +241,7 @@ class WktCsvVectorLayerDescriptor(CsvVectorLayerDescriptor):
     def getGeometryFromRow(self, row):
         return QgsGeometry.fromWkt(row[self.wktIndex])
     
-    def indexIsGeoemtryIndex(self, attributeIndex):
+    def indexIsGeometryIndex(self, attributeIndex):
         return (attributeIndex == self.wktIndex)
              
     def updateGeoAttributes(self, vectorLayer, feature):
@@ -278,7 +279,7 @@ class PointCsvVectorLayerDescriptor(CsvVectorLayerDescriptor):
         except ValueError:
             raise GeoCsvUnknownGeometryTypeException()
         
-    def indexIsGeoemtryIndex(self, attributeIndex):
+    def indexIsGeometryIndex(self, attributeIndex):
         return (attributeIndex == self.eastingIndex or attributeIndex == self.northingIndex)
         
 
