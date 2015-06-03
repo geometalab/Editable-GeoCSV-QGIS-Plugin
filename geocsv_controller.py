@@ -21,14 +21,15 @@ email                : geometalab@gmail.com
 
 import weakref
 
-from qgis.core import QgsMapLayerRegistry
+from qgis.core import QgsMapLayerRegistry, QgsProject
 
-from PyQt4.QtGui import QFileDialog
+from PyQt4.QtGui import QFileDialog, QDesktopServices
 from PyQt4.Qt import QMessageBox, QApplication
 from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict
 from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory, NotificationHandler
 from geocsv_model import CsvVectorLayerDescriptor, GeoCSVAttribute
 from geocsv_exception import *
+from PyQt4.QtCore import QFileInfo
 
 
 class GeoCsvNewController:
@@ -46,7 +47,9 @@ class GeoCsvNewController:
         self.csvtFileIsDirty = False
         self.newDialog = GeoCsvDialogNew() 
         self._initConnections()
-        self._initVisibility()       
+        self._initVisibility()        
+        absoluteProjectPath = QgsProject.instance().readPath("./")        
+        self._browseOpenPath = QDesktopServices.storageLocation(QDesktopServices.HomeLocation) if absoluteProjectPath == "./" else absoluteProjectPath    
         
     def createCsvVectorLayer(self, csvVectorLayers, qgsVectorLayer=None, customTitle=None):
         if self.newDialog.isVisible():
@@ -134,8 +137,9 @@ class GeoCsvNewController:
         self._updateAcceptButton()
 
     def _onFileBrowserButton(self):             
-        csvFilePath = QFileDialog.getOpenFileName(self.newDialog, QApplication.translate('GeoCsvNewController', 'Open GeoCSV File'), '', QApplication.translate('GeoCsvNewController', 'Files (*.csv *.tsv *.*)'))
+        csvFilePath = QFileDialog.getOpenFileName(self.newDialog, QApplication.translate('GeoCsvNewController', 'Open GeoCSV File'), self._browseOpenPath, QApplication.translate('GeoCsvNewController', 'Files (*.csv *.tsv *.*)'))
         if csvFilePath:
+            self._browseOpenPath = QFileInfo(csvFilePath).path()
             self.newDialog.filePath.setText(csvFilePath)   
         self.newDialog.activateWindow()  
         
