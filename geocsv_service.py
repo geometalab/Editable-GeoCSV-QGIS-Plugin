@@ -84,7 +84,7 @@ class GeoCsvDataSourceHandler:
                                                                                             
     def __init__(self, pathToCsvFile, csvEncoding=_csvDefaultEncoding):
         csv.register_dialect('excel-semicolon', CsvExcelSemicolonDialect)
-        csv.field_size_limit(sys.maxsize)
+        csv.field_size_limit(sys.maxint)
         try:
             self._fileContainer = GeoCsvFileContainer(pathToCsvFile)
             self._csvHasHeader = True
