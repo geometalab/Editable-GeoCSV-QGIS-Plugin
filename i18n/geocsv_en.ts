@@ -53,7 +53,7 @@
     </message>
     <message>
         <location filename="geocsv_controller.py" line="77"/>
-        <source>GeoCSV Layer created</source>
+        <source>GeoCSV</source>
         <translation>GeoCSV layer created</translation>
     </message>
     <message>
@@ -161,13 +161,13 @@
     </message>
     <message>
         <location filename="geocsv_controller.py" line="284"/>
-        <source>GeoCSV Layer reconnected</source>
+        <source>GeoCSV</source>
         <translation>GeoCSV layer reconnected</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="284"/>
         <source>Layer &quot;{}&quot; is successfully reconnected</source>
-        <translation>Layer &quot;{}&quot; is successfully reconnected</translation>
+        <translation>Layer &quot;{}&quot; is successfully reconnected.</translation>
     </message>
 </context>
 <context>
@@ -175,12 +175,12 @@
     <message>
         <location filename="geocsv_controller.py" line="298"/>
         <source>CSV File updated</source>
-        <translation>CSV file updated</translation>
+        <translation>GeoCSV</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="298"/>
         <source>Changes to layer &quot;{}&quot; successfully stored in csv file.</source>
-        <translation>Changes to layer &quot;{}&quot; successfully stored in CSV file.</translation>
+        <translation>Changes to layer &quot;{}&quot; successfully updated in CSV file.</translation>
     </message>
 </context>
 <context>
@@ -306,12 +306,12 @@
     <message>
         <location filename="geocsv_dialog_new.ui" line="177"/>
         <source>Easting Field</source>
-        <translation>Easting Field</translation>
+        <translation>Easting Field (longitude or x)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="190"/>
         <source>Northing Field</source>
-        <translation>Northing Field</translation>
+        <translation>Northing Field (latitude or y)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="277"/>
@@ -332,7 +332,7 @@
         <location filename="geocsv_dialog_new.ui" line="247"/>
         <source>The csv File is not in UTF-8. Please convert it first
  (CAUTION: the original file will be overwritten):</source>
-        <translation>The CSV file is not UTF-8 encoded. Please choose the original encoding (Note: A backup file will be written and then it will be overwritten).</translation>
+        <translation>The file is not UTF-8 encoded. Please choose the original encoding (Note: A backup file will be written and then it will be overwritten).</translation>
     </message>
 </context>
 </TS>

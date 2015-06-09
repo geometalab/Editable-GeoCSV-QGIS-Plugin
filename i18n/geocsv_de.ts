@@ -54,12 +54,12 @@
     <message>
         <location filename="geocsv_controller.py" line="77"/>
         <source>GeoCSV Layer created</source>
-        <translation>GeoCSV-Layer erstellt</translation>
+        <translation>GeoCSV</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="77"/>
         <source>The layer &quot;{}&quot; was created successfully.</source>
-        <translation>Der Layer &quot;{}&quot; wurde erfolgreich erstellt</translation>
+        <translation>Der Layer &quot;{}&quot; wurde erfolgreich erstellt.</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="136"/>
@@ -162,12 +162,12 @@
     <message>
         <location filename="geocsv_controller.py" line="284"/>
         <source>GeoCSV Layer reconnected</source>
-        <translation>GeoCSV-Layer erfolgreich geladen</translation>
+        <translation>GeoCSV</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="284"/>
         <source>Layer &quot;{}&quot; is successfully reconnected</source>
-        <translation>Der Layer &quot;{}&quot; wurde erfolgreich geladen</translation>
+        <translation>Der Layer &quot;{}&quot; wurde erfolgreich geladen.</translation>
     </message>
 </context>
 <context>
@@ -175,12 +175,12 @@
     <message>
         <location filename="geocsv_controller.py" line="298"/>
         <source>CSV File updated</source>
-        <translation>CSV-Datei aktualisiert</translation>
+        <translation>GeoCSV</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="298"/>
         <source>Changes to layer &quot;{}&quot; successfully stored in csv file.</source>
-        <translation>Änderungen im Layer &quot;{}&quot; wurden erfolgreich gespeichert. </translation>
+        <translation>Änderungen im Layer &quot;{}&quot; wurden erfolgreich aktualisiert. </translation>
     </message>
 </context>
 <context>
@@ -296,7 +296,7 @@
     <message>
         <location filename="geocsv_dialog_new.ui" line="113"/>
         <source>Point (Easting/Northing)</source>
-        <translation>Easting/Northing (Point)</translation>
+        <translation>Easting/Northing (Punkt)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="132"/>
@@ -306,12 +306,12 @@
     <message>
         <location filename="geocsv_dialog_new.ui" line="177"/>
         <source>Easting Field</source>
-        <translation>Easting Feld</translation>
+        <translation>Easting-Feld (Längengrad oder X)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="190"/>
         <source>Northing Field</source>
-        <translation>Northing Feld</translation>
+        <translation>Northing-Feld (Breitengrad oder Y)</translation>
     </message>
     <message>
         <location filename="geocsv_dialog_new.ui" line="277"/>
@@ -332,7 +332,7 @@
         <location filename="geocsv_dialog_new.ui" line="247"/>
         <source>The csv File is not in UTF-8. Please convert it first
  (CAUTION: the original file will be overwritten):</source>
-        <translation>Die CSV-Datei ist nicht UTF-8 kodiert. Bitte die ursprüngliche Kodierung angeben (Hinweis: Es wird eine Backup-Datei erstellt und die Datei überschrieben).</translation>
+        <translation>Die Datei ist nicht UTF-8 kodiert. Bitte die ursprüngliche Kodierung angeben (Hinweis: Es wird eine Backup-Datei erstellt und die Datei überschrieben).</translation>
     </message>
 </context>
 </TS>
