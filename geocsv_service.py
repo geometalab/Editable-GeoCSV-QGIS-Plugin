@@ -41,7 +41,7 @@ class GeoCsvVectorLayerFactory:
             # create VectorLayer using memory provider
             _path = vectorLayerDescriptor.geometryType
             if vectorLayerDescriptor.crs:
-                _path += "?crs="+vectorLayerDescriptor.crs.toWkt()            
+                _path += "?crs=" + vectorLayerDescriptor.crs.toWkt()            
             qgsVectorLayer = QgsVectorLayer(_path, vectorLayerDescriptor.layerName, "memory")
         else:            
             # reset the memory layer 
@@ -69,7 +69,7 @@ class GeoCsvDataSourceHandler:
     @staticmethod
     def convertFileToUTF8(pathToFile, sourceEncoding):
         csv.register_dialect('excel-semicolon', CsvExcelSemicolonDialect)
-        with open(pathToFile, 'r+') as csvfile:
+        with open(pathToFile, 'r+b') as csvfile:
             queue = cStringIO.StringIO()
             reader = UnicodeReader(csvfile, dialect='excel-semicolon', encoding=sourceEncoding)
             queueWriter = UnicodeWriter(queue, dialect='excel-semicolon') 
@@ -83,7 +83,7 @@ class GeoCsvDataSourceHandler:
     def createBackupFile(pathToFile):        
         if os.path.isfile(pathToFile):
             root, ext = os.path.splitext(pathToFile)
-            backupPath = root+'_backup'+ext
+            backupPath = root + '_backup' + ext
             shutil.copy(pathToFile, backupPath)
             
                                                                                             
@@ -104,14 +104,9 @@ class GeoCsvDataSourceHandler:
                 
     def _examineDataSource(self):
         try :
-            with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:
-                try:
-                    self._csvHasHeader = csv.Sniffer().has_header(csvfile.read(4096))
-                    csvfile.seek(0)
-                except:
-                    pass     
+            with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:                                
                 reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
-                #to see if all rows can be read in the csvDefaultEncoding encoding, we need to iterate over the list
+                # to see if all rows can be read in the csvDefaultEncoding encoding, we need to iterate over the list
                 for row in reader:
                     pass                                                                                     
         except UnicodeDecodeError:            
@@ -227,7 +222,7 @@ class GeoCsvDataSourceHandler:
         ':type vectorLayerDescriptor:CsvVectorLayerDescriptor'
         features = []
         with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:            
-                reader = UnicodeReader(csvfile, dialect=self._csvDialect,encoding=self._csvDefaultEncoding)
+                reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
                 if self._csvHasHeader:
                     reader.next()                 
                 for row in reader:
@@ -255,7 +250,7 @@ class GeoCsvDataSourceHandler:
                         try:
                             row.append(feature[feature.fieldNameIndex(attribute)])
                         except KeyError:
-                            #there is a qgis bug related to improper attribute deletion
+                            # there is a qgis bug related to improper attribute deletion
                             raise                                                                        
                     writer.writerow(row)                
         except:            
@@ -278,7 +273,7 @@ class GeoCsvDataSourceHandler:
         
     def getSampleRowsFromCSV(self, maxRows=3):
         try :                                    
-            with open(self._fileContainer.pathToCsvFile, 'r') as csvfile:                
+            with open(self._fileContainer.pathToCsvFile, 'rb') as csvfile:                
                 reader = UnicodeReader(csvfile, dialect=self._csvDialect, encoding=self._csvDefaultEncoding)
                 if self._csvHasHeader:
                     reader.next()                    
@@ -299,7 +294,7 @@ class GeoCsvDataSourceHandler:
 
     def updatePrjFile(self, crsWkt):
         with open(self._fileContainer.constructPrjPath(), 'w+b') as prjfile:
-            prjfile.write(unicode(crsWkt+"\n").encode("utf-8"))
+            prjfile.write(unicode(crsWkt + "\n").encode("utf-8"))
             self._fileContainer._createPathToPRJ()
             
     def moveDataSourcesToPath(self, newPath):
@@ -354,7 +349,7 @@ class GeoCsvDataSourceHandler:
         if self._fileContainer.hasPrj():
             with open(self._fileContainer.pathToPrj) as prjfile:
                 crsWkt = prjfile.readline()
-                _crs =  QgsCoordinateReferenceSystem()
+                _crs = QgsCoordinateReferenceSystem()
                 if _crs.createFromWkt(crsWkt):
                     crs = _crs
         return crs
@@ -424,7 +419,7 @@ class GeoCsvFileContainer:
             raise FileNotFoundException()
         self.rootPath, fileExtension = os.path.splitext(pathToCsvFile)
         if fileExtension == '.csvz':
-            #ToDo
+            # ToDo
             pass
         else:
             self.pathToCsvFile = pathToCsvFile
@@ -439,18 +434,18 @@ class GeoCsvFileContainer:
         return self.pathToPrj != ''
     
     def constructCsvtPath(self):
-        return self.rootPath +'.csvt'
+        return self.rootPath + '.csvt'
     
     def constructPrjPath(self):
-        return self.rootPath +'.prj'
+        return self.rootPath + '.prj'
     
     def moveToNewPath(self, newPath):
         newRootPath, newFileExtension = os.path.splitext(newPath)        
         shutil.copyfile(self.pathToCsvFile, newPath)
         if self.hasCsvt():
-            shutil.copyfile(self.pathToCsvtFile, newRootPath+'.csvt')
+            shutil.copyfile(self.pathToCsvtFile, newRootPath + '.csvt')
         if self.hasPrj():
-            shutil.copyfile(self.pathToPrj, newRootPath+'.prj')
+            shutil.copyfile(self.pathToPrj, newRootPath + '.prj')
         self._initWithPath(newPath)                
                                 
     def _createPathToCSVT(self):
@@ -498,7 +493,7 @@ class NotificationHandler:
     @classmethod  
     def _pushMessage(cls, title, message, messageLevel, duration=None):
         duration = duration if duration is not None else cls._duration
-        cls._iface.messageBar().pushMessage(title,message,level=messageLevel, duration=duration)
+        cls._iface.messageBar().pushMessage(title, message, level=messageLevel, duration=duration)
     
     @classmethod 
     def _checkConfiguration(cls):
@@ -518,7 +513,7 @@ class UTF8Recoder:
         return self._removeBOM(self.reader.next().encode("utf-8"))
     
     def _removeBOM(self, line):
-        #remove byte order mark form file if exists
+        # remove byte order mark form file if exists
         return line[3:] if line.startswith(codecs.BOM_UTF8) else line
                           
 class UnicodeReader:
