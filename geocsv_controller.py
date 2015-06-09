@@ -24,7 +24,7 @@ import weakref
 from qgis.core import QgsMapLayerRegistry, QgsProject
 
 from PyQt4.QtGui import QFileDialog, QDesktopServices
-from PyQt4.Qt import QMessageBox, QApplication
+from PyQt4.Qt import QMessageBox, QApplication, QSettings
 from geocsv_ui import GeoCsvDialogNew, GeoCsvDialogConflict
 from geocsv_service import GeoCsvDataSourceHandler, GeoCsvVectorLayerFactory, NotificationHandler
 from geocsv_model import CsvVectorLayerDescriptor, GeoCSVAttribute
@@ -36,20 +36,27 @@ class GeoCsvNewController:
 
     _instance = None
     
-    @classmethod
-    def getInstance(cls):
-        if not cls._instance:
-            cls._instance = GeoCsvNewController()
-        return cls._instance
 
-    def __init__(self):             
+    def __init__(self, projectSettings):
+        ':type projectSettings:QSettings'             
         self.geometryFieldUpdate = False
         self.csvtFileIsDirty = False
         self.newDialog = GeoCsvDialogNew() 
         self._initConnections()
-        self._initVisibility()        
-        absoluteProjectPath = QgsProject.instance().readPath("./")        
-        self._browseOpenPath = QDesktopServices.storageLocation(QDesktopServices.HomeLocation) if absoluteProjectPath == "./" else absoluteProjectPath    
+        self._initVisibility()  
+        self._settings = projectSettings                          
+        self._browseOpenPath = self._getDefaultFileOpenDir(projectSettings)
+        
+    def _getDefaultFileOpenDir(self, settings):
+        ':type settings:QSettings' 
+        openDir = settings.value('lastUsedFileOpenDir', '') 
+        if not openDir:            
+            absoluteProjectPath = QgsProject.instance().readPath("./")
+            openDir = QDesktopServices.storageLocation(QDesktopServices.HomeLocation) if absoluteProjectPath == "./" else absoluteProjectPath
+        return openDir
+    
+    def _updateDefaultFileOpenDir(self, newPath):
+        self._settings.setValue('lastUsedFileOpenDir', newPath)  
         
     def createCsvVectorLayer(self, csvVectorLayers, qgsVectorLayer=None, customTitle=None):
         if self.newDialog.isVisible():
@@ -139,7 +146,7 @@ class GeoCsvNewController:
     def _onFileBrowserButton(self):             
         csvFilePath = QFileDialog.getOpenFileName(self.newDialog, QApplication.translate('GeoCsvNewController', 'Open GeoCSV File'), self._browseOpenPath, QApplication.translate('GeoCsvNewController', 'Files (*.csv *.tsv *.*)'))
         if csvFilePath:
-            self._browseOpenPath = QFileInfo(csvFilePath).path()
+            self._updateDefaultFileOpenDir(QFileInfo(csvFilePath).path())
             self.newDialog.filePath.setText(csvFilePath)   
         self.newDialog.activateWindow()  
         

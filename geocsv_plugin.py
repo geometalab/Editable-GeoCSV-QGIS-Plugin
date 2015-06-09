@@ -47,6 +47,7 @@ class EditableGeoCsv:
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
         NotificationHandler.configureIface(iface)
+        self.settings = QSettings("Editable GeoCSV","editablegeocsv")
         #container for all csv vector layers                        
         self.csvVectorLayers = []          
         #if the project file is successfully read, reconnect all CsvVectorLayers with its datasource
@@ -54,13 +55,12 @@ class EditableGeoCsv:
         #connect to the qgis refresh button
         self._connectToRefreshAction()
         
-    
-                                                      
+                                                         
     def initGui(self):
         addGeoCsvLayerIcon = QIcon(':/plugins/editablegeocsv/geocsv.png')
         addGeoCsvLayerText = QCoreApplication.translate('EditableGeoCsv', 'Add GeoCSV layer')        
         self.addGeoCsvLayerAction = QAction(addGeoCsvLayerIcon, addGeoCsvLayerText, self._iface.mainWindow())
-        self.addGeoCsvLayerAction.triggered.connect(lambda: GeoCsvNewController.getInstance().createCsvVectorLayer(self.csvVectorLayers))
+        self.addGeoCsvLayerAction.triggered.connect(lambda: GeoCsvNewController(self.settings).createCsvVectorLayer(self.csvVectorLayers))
         self._iface.addToolBarIcon(self.addGeoCsvLayerAction)
         self._iface.addPluginToMenu(QCoreApplication.translate('EditableGeoCsv', 'Editable GeoCSV'), self.addGeoCsvLayerAction)
                         
@@ -73,7 +73,8 @@ class EditableGeoCsv:
     def _connectToRefreshAction(self):
         for action in self._iface.mapNavToolToolBar().actions():
             if action.objectName() == "mActionDraw":
-                action.triggered.connect(lambda: self._refreshCsvVectorLayers())                                              
+                action.triggered.connect(lambda: self._refreshCsvVectorLayers())
+                break                                              
     
     def _refreshCsvVectorLayers(self):
         newCsvVectorLayers = []
