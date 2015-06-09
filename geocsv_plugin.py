@@ -51,6 +51,10 @@ class EditableGeoCsv:
         self.csvVectorLayers = []          
         #if the project file is successfully read, reconnect all CsvVectorLayers with its datasource
         self._iface.projectRead.connect(lambda: GeoCsvReconnectController.getInstance().reconnectCsvVectorLayers(self.csvVectorLayers))
+        #connect to the qgis refresh button
+        self._connectToRefreshAction()
+        
+    
                                                       
     def initGui(self):
         addGeoCsvLayerIcon = QIcon(':/plugins/editablegeocsv/geocsv.png')
@@ -59,9 +63,20 @@ class EditableGeoCsv:
         self.addGeoCsvLayerAction.triggered.connect(lambda: GeoCsvNewController.getInstance().createCsvVectorLayer(self.csvVectorLayers))
         self._iface.addToolBarIcon(self.addGeoCsvLayerAction)
         self._iface.addPluginToMenu(QCoreApplication.translate('EditableGeoCsv', 'Editable GeoCSV'), self.addGeoCsvLayerAction)
-                    
+                        
     def unload(self):        
         self._iface.removePluginMenu(
             QCoreApplication.translate('EditableGeoCsv', 'Editable GeoCSV'),
             self.addGeoCsvLayerAction)
         self._iface.removeToolBarIcon(self.addGeoCsvLayerAction)
+        
+    def _connectToRefreshAction(self):
+        for action in self._iface.mapNavToolToolBar().actions():
+            if action.objectName() == "mActionDraw":
+                action.triggered.connect(lambda: self._refreshCsvVectorLayers())                                              
+    
+    def _refreshCsvVectorLayers(self):
+        newCsvVectorLayers = []
+        GeoCsvReconnectController.getInstance().reconnectCsvVectorLayers(newCsvVectorLayers)
+        self.csvVectorLayers = newCsvVectorLayers
+        self._iface.mapCanvas().refresh()

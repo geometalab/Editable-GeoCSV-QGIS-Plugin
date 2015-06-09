@@ -43,6 +43,11 @@ class GeoCsvVectorLayerFactory:
             if vectorLayerDescriptor.crs:
                 _path += "?crs="+vectorLayerDescriptor.crs.toWkt()            
             qgsVectorLayer = QgsVectorLayer(_path, vectorLayerDescriptor.layerName, "memory")
+        else:            
+            # reset the memory layer 
+            qgsVectorLayer.dataProvider().deleteFeatures(qgsVectorLayer.allFeatureIds())
+            qgsVectorLayer.dataProvider().deleteAttributes(qgsVectorLayer.dataProvider().fields().allAttributesList())
+                                    
         # : :type dataProvider: QgsVectorDataProvider                
         dataProvider = qgsVectorLayer.dataProvider() 
         dataProvider.addAttributes(vectorLayerDescriptor.getAttributesAsQgsFields())        
