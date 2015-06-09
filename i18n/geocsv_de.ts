@@ -114,7 +114,7 @@
     <message>
         <location filename="geocsv_controller.py" line="147"/>
         <source>Files (*.csv *.tsv *.*)</source>
-        <translation>Dateien (*.csv *.tsv *.txt);; Alle Dateien (*.*)</translation>
+        <translation type="unfinished">Textdateien (*.csv *.tsv *.txt);; Alle Dateien (*.*)</translation>
     </message>
     <message>
         <location filename="geocsv_controller.py" line="132"/>
