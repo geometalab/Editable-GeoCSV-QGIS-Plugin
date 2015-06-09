@@ -40,8 +40,9 @@ class GeoCsvVectorLayerFactory:
         if not qgsVectorLayer:
             # create VectorLayer using memory provider
             _path = vectorLayerDescriptor.geometryType
+            _path += '?index=yes'
             if vectorLayerDescriptor.crs:
-                _path += "?crs=" + vectorLayerDescriptor.crs.toWkt()            
+                _path += "&crs=" + vectorLayerDescriptor.crs.toWkt()            
             qgsVectorLayer = QgsVectorLayer(_path, vectorLayerDescriptor.layerName, "memory")
         else:            
             # reset the memory layer 
