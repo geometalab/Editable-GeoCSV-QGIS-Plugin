@@ -23,7 +23,7 @@ from qgis.core import QgsField, QgsGeometry, QgsPoint, QgsFeatureRequest
 from PyQt4.QtCore import QVariant
 
 from geocsv_exception import GeoCsvUnknownGeometryTypeException,GeoCsvUnknownAttributeException, GeoCsvMalformedGeoAttributeException
-from PyQt4.Qt import QMetaType, QMessageBox, QApplication
+from PyQt4.Qt import QMetaType
 
 class GeometryType:
     # Currently, QGis can only determine Point, LineString and Polygon geometry types
@@ -339,8 +339,7 @@ class CsvVectorLayer():
         self.dirty = True
         
     def reloadFromDataSource(self):
-        self.qgsVectorLayer.reload()
-        test = ""
+        self.qgsVectorLayer.reload()        
             
     def checkAttributeDeleted(self, attributeId):
         if not self.vectorLayerController.checkDeleteAttribute(attributeId, self.vectorLayerDescriptor):
