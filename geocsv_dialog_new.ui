@@ -169,7 +169,7 @@
       <rect>
        <x>0</x>
        <y>10</y>
-       <width>91</width>
+       <width>201</width>
        <height>16</height>
       </rect>
      </property>
@@ -182,7 +182,7 @@
       <rect>
        <x>200</x>
        <y>10</y>
-       <width>91</width>
+       <width>221</width>
        <height>16</height>
       </rect>
      </property>
@@ -301,6 +301,10 @@
     </item>
    </layout>
   </widget>
+  <zorder>gridLayoutWidget</zorder>
+  <zorder>charsetWidget</zorder>
+  <zorder>horizontalLayoutWidget_2</zorder>
+  <zorder>geometryWidget</zorder>
  </widget>
  <resources/>
  <connections/>
