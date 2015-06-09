@@ -61,8 +61,9 @@ class EditableGeoCsv:
         addGeoCsvLayerText = QCoreApplication.translate('EditableGeoCsv', 'Add GeoCSV layer')        
         self.addGeoCsvLayerAction = QAction(addGeoCsvLayerIcon, addGeoCsvLayerText, self._iface.mainWindow())
         self.addGeoCsvLayerAction.triggered.connect(lambda: GeoCsvNewController(self.settings).createCsvVectorLayer(self.csvVectorLayers))
-        self._iface.addToolBarIcon(self.addGeoCsvLayerAction)
-        self._iface.addPluginToMenu(QCoreApplication.translate('EditableGeoCsv', 'Editable GeoCSV'), self.addGeoCsvLayerAction)
+#         self._iface.addToolBarIcon(self.addGeoCsvLayerAction)
+        self._iface.layerToolBar().addAction(self.addGeoCsvLayerAction)
+        self._iface.addPluginToVectorMenu(QCoreApplication.translate('EditableGeoCsv', 'Editable GeoCSV'), self.addGeoCsvLayerAction)
                         
     def unload(self):        
         self._iface.removePluginMenu(
