@@ -244,7 +244,7 @@ class GeoCsvDataSourceHandler:
                 
         try:            
             _path = self._fileContainer.pathToCsvFile if not alternativeSavePath else alternativeSavePath
-            with open(_path, 'w+') as csvfile:                                
+            with open(_path, 'w+b') as csvfile:                                
                 writer = UnicodeWriter(csvfile, dialect=self._csvDialect)
                 attributeNames = [attribute.name for attribute in vectorLayerDescriptor.attributes if attribute is not None]
                 # write header row
@@ -255,7 +255,7 @@ class GeoCsvDataSourceHandler:
                         try:
                             row.append(feature[feature.fieldNameIndex(attribute)])
                         except KeyError:
-                            #there is a qgis bug related to improper attribute deleteion
+                            #there is a qgis bug related to improper attribute deletion
                             raise                                                                        
                     writer.writerow(row)                
         except:            
@@ -298,7 +298,7 @@ class GeoCsvDataSourceHandler:
 
 
     def updatePrjFile(self, crsWkt):
-        with open(self._fileContainer.constructPrjPath(), 'w+') as prjfile:
+        with open(self._fileContainer.constructPrjPath(), 'w+b') as prjfile:
             prjfile.write(unicode(crsWkt+"\n").encode("utf-8"))
             self._fileContainer._createPathToPRJ()
             
@@ -310,7 +310,7 @@ class GeoCsvDataSourceHandler:
         
     def updateCsvtFile(self, attributeTypes):
         try: 
-            with open(self._fileContainer.constructCsvtPath(), "w+") as csvtfile:                 
+            with open(self._fileContainer.constructCsvtPath(), "w+b") as csvtfile:                 
                 writer = UnicodeWriter(csvtfile, dialect=self._csvtDialect)
                 geoCsvAttributeTypes = [attributeType.toCsvtString() for attributeType in attributeTypes]
                 writer.writerow([unicode(s).encode("utf-8") for s in geoCsvAttributeTypes])
