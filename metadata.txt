@@ -3,7 +3,7 @@
 name=Editable GeoCSV
 qgisMinimumVersion=2.0
 description=Load, edit and save GeoCSV files
-version=0.8.3
+version=1.0.0
 author=geometalab
 email=geometalab@gmail.com
 
@@ -17,7 +17,7 @@ tracker=https://github.com/geometalab/Editable-GeoCSV-QGIS-Plugin/issues
 repository=https://github.com/geometalab/Editable-GeoCSV-QGIS-Plugin
 category=Plugins
 icon=geocsv.png
-experimental=True
+experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
