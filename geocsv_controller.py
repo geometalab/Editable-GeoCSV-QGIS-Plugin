@@ -42,6 +42,7 @@ class GeoCsvNewController:
         self.geometryFieldUpdate = False
         self.csvtFileIsDirty = False
         self.newDialog = GeoCsvDialogNew() 
+        self.newDialog.setModal(True)
         self._initConnections()
         self._initVisibility()  
         self._settings = projectSettings                          
