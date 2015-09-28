@@ -5,7 +5,7 @@ qgisMinimumVersion=2.0
 description=Load, edit and save GeoCSV files
 about=This plugin allows files in GeoCSV format to be loaded, edited and saved in QGIS including geometry. 
      This allows to integrate QGIS with spreadsheet programs like LibreOffice.
-version=1.0.0
+version=1.0.1
 author=geometalab
 email=geometalab@gmail.com
 
