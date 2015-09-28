@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<!DOCTYPE TS><TS version="2.0" language="en" sourcelanguage="">
 <context>
     <name>EditableGeoCsv</name>
     <message>
@@ -9,7 +8,7 @@
         <translation>Add GeoCSV layer...</translation>
     </message>
     <message>
-        <location filename="geocsv_plugin.py" line="68"/>
+        <location filename="geocsv_plugin.py" line="71"/>
         <source>Editable GeoCSV</source>
         <translation>Editable GeoCSV</translation>
     </message>
