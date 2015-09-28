@@ -58,7 +58,9 @@ PY_FILES = \
 UI_FILES = \
     geocsv_dialog_new.ui \
     geocsv_dialog_conflict.ui
-
+    
+TEMPLATE_DIR = template
+    
 EXTRAS = geocsv.png metadata.txt
 
 COMPILED_RESOURCE_FILES = resources_rc.py
@@ -121,6 +123,7 @@ deploy: compile transcompile
 	cp -vf $(COMPILED_RESOURCE_FILES) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vf $(EXTRAS) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 	cp -vfr i18n $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
+	cp -vfr $(TEMPLATE_DIR) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)
 #	cp -vfr $(HELP) $(HOME)/$(QGISDIR)/python/plugins/$(PLUGINNAME)/help
 
 # The dclean target removes compiled python files from plugin directory
