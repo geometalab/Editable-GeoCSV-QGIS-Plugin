@@ -36,8 +36,8 @@ class EditableGeoCsv:
     def __init__(self, iface):          
 #         pydevd.settrace()                                
         self._iface = iface        
-        self.plugin_dir = os.path.dirname(__file__)        
-        locale = QSettings().value('locale/userLocale')[0:2]
+        self.plugin_dir = os.path.dirname(__file__)                     
+        locale = QSettings().value('locale/userLocale','en')[0:2]
         locale_path = os.path.join(self.plugin_dir,'i18n','geocsv_{}.qm'.format(locale))
 
         if os.path.exists(locale_path):
