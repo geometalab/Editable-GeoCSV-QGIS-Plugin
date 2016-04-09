@@ -17,7 +17,7 @@ tags=csv, tsv, table, import, geocoding, text, geocsv
 homepage=http://giswiki.hsr.ch/Editable_GeoCSV
 tracker=https://github.com/geometalab/Editable-GeoCSV-QGIS-Plugin/issues
 repository=https://github.com/geometalab/Editable-GeoCSV-QGIS-Plugin
-category=Plugins
+category=Vector
 icon=geocsv.png
 experimental=False
 
