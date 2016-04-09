@@ -12,7 +12,7 @@ email=geometalab@gmail.com
 changelog=First release.
 
 # Tags are comma separated with spaces allowed
-tags=csv, tsv, table, import, geocoding, text, geocsv
+tags=csv, tsv, table, import, geocoding, text, geocsv, vector
 
 homepage=http://giswiki.hsr.ch/Editable_GeoCSV
 tracker=https://github.com/geometalab/Editable-GeoCSV-QGIS-Plugin/issues
