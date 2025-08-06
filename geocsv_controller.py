@@ -343,7 +343,7 @@ class VectorLayerController:
             vectorLayerDescriptor.addAttribute(GeoCSVAttribute.createFromQgsField(attribute))
         try:
             self.csvDataSourceHandler.updateCsvtFile(vectorLayerDescriptor.getAttributeTypes())
-            NotificationHandler..pushInfo(
+            NotificationHandler.pushInfo(
                 'CSVT File created/updated.',
                 'The CSVT file was successfully created/updated on disk.'
             )

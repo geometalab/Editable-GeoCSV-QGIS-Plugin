@@ -22,7 +22,7 @@ import logging
 from qgis.core import QgsField, QgsGeometry, QgsPointXY, QgsFeatureRequest, QgsVectorLayer
 from PyQt5.QtCore import QVariant
 
-from geocsv_exception import GeoCsvUnknownGeometryTypeException, GeoCsvUnknownAttributeException, \
+from .geocsv_exception import GeoCsvUnknownGeometryTypeException, GeoCsvUnknownAttributeException, \
     GeoCsvMalformedGeoAttributeException
 
 

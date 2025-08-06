@@ -28,8 +28,8 @@ import io
 
 from qgis.core import QgsVectorLayer, QgsFeature, QgsCoordinateReferenceSystem
 from qgis.gui import QgsMessageBar
-from geocsv_exception import *
-from geocsv_model import CsvVectorLayer, GeoCsvAttributeType, PointCsvVectorLayerDescriptor, \
+from .geocsv_exception import *
+from .geocsv_model import CsvVectorLayer, GeoCsvAttributeType, PointCsvVectorLayerDescriptor, \
     WktCsvVectorLayerDescriptor, GeoCSVAttribute
 
 
