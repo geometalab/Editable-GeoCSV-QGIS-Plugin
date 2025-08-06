@@ -11,6 +11,20 @@ sys.modules['PyQt5.QtCore'] = MagicMock()
 sys.modules['PyQt5.QtGui'] = MagicMock()
 sys.modules['PyQt5.QtWidgets'] = MagicMock()
 
+class QgsWkbTypes:
+    class Type:
+        Point = 1
+        LineString = 2
+        Polygon = 3
+
+sys.modules['qgis.core'].QgsWkbTypes = QgsWkbTypes
+
+# Configure the mock QgsGeometry
+mock_geom = MagicMock()
+mock_geom.type.return_value = QgsWkbTypes.Type.Point
+sys.modules['qgis.core'].QgsGeometry.fromWkt.return_value = mock_geom
+
+
 # Discover and run tests
 if __name__ == '__main__':
     # Add the project root to the python path

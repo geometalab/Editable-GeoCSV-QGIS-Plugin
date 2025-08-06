@@ -18,7 +18,7 @@ email                : geometalab@gmail.com
  *                                                                         *
  ***************************************************************************/
 """
-
+import logging
 from qgis.core import QgsField, QgsGeometry, QgsPointXY, QgsFeatureRequest, QgsVectorLayer
 from PyQt5.QtCore import QVariant
 
@@ -26,11 +26,13 @@ from geocsv_exception import GeoCsvUnknownGeometryTypeException, GeoCsvUnknownAt
     GeoCsvMalformedGeoAttributeException
 
 
+from qgis.core import QgsWkbTypes
+
 class GeometryType:
     point = "Point"
     lineString = "LineString"
     polygon = "Polygon"
-    convertFromQgisGeometryType = {0: point, 1: lineString, 2: polygon}
+    convertFromQgisGeometryType = {QgsWkbTypes.Type.Point: point, QgsWkbTypes.Type.LineString: lineString, QgsWkbTypes.Type.Polygon: polygon}
 
 
 class GeoCsvAttributeType:
@@ -219,6 +221,7 @@ class WktCsvVectorLayerDescriptor(CsvVectorLayerDescriptor):
         wkt = row[self.wktIndex]
         qgsGeometry = QgsGeometry.fromWkt(wkt)
         qgsGeometryType = qgsGeometry.type()
+        logging.warning("qgsGeometryType: %s", qgsGeometryType)
         if qgsGeometryType in GeometryType.convertFromQgisGeometryType:
             self.geometryType = GeometryType.convertFromQgisGeometryType[qgsGeometryType]
         else:
@@ -307,7 +310,7 @@ class CsvVectorLayer():
     def featuresRemoved(self, layer, featureIds):
         self.dirty = True
 
-    def attributesValueChanged(self, layerId, changedValues):
+    def attributesValueChanged(self, layerId, changed):
         self.dirty = True
 
     def attributesAdded(self, layerId, attributes):

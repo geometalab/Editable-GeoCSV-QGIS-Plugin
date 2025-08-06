@@ -2,13 +2,13 @@
 
 [general]
 name=Editable GeoCSV
-qgisMinimumVersion=3.8
+qgisMinimumVersion=3.26.3
 version=1.0.2
 
 author=Carmelo Schumacher
 email=geometalab@ost.ch
 
-description=Load, edit and save GeoCSV files
+description=Load, edit and save GeoCSV files. QGIS version: 3.26.3
 
 about=This plugin allows files in GeoCSV format to be loaded, edited and saved in QGIS including geometry. This allows to integrate QGIS with spreadsheet programs like LibreOffice.
 
