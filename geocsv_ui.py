@@ -21,8 +21,7 @@ email                : geometalab@gmail.com
 
 import os
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import QCoreApplication
+from PyQt5 import QtWidgets, uic
 
 FORM_CLASS_NEW, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'geocsv_dialog_new.ui'))
@@ -31,12 +30,13 @@ FORM_CLASS_CONFLICT, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'geocsv_dialog_conflict.ui'))
 
 
-class GeoCsvDialogNew(QtGui.QDialog, FORM_CLASS_NEW):
-    def __init__(self, parent=None):        
-        super(GeoCsvDialogNew, self).__init__(parent)        
+class GeoCsvDialogNew(QtWidgets.QDialog, FORM_CLASS_NEW):
+    def __init__(self, parent=None):
+        super(GeoCsvDialogNew, self).__init__(parent)
         self.setupUi(self)
-        
-class GeoCsvDialogConflict(QtGui.QDialog, FORM_CLASS_CONFLICT):
-    def __init__(self, parent=None):        
-        super(GeoCsvDialogConflict, self).__init__(parent)        
+
+
+class GeoCsvDialogConflict(QtWidgets.QDialog, FORM_CLASS_CONFLICT):
+    def __init__(self, parent=None):
+        super(GeoCsvDialogConflict, self).__init__(parent)
         self.setupUi(self)  

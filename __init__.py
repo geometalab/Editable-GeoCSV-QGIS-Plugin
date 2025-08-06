@@ -21,6 +21,9 @@ email                : geometalab@gmail.com
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
-    
-    from geocsv_plugin import EditableGeoCsv
-    return EditableGeoCsv(iface)
+    """Load EditableGeoCsv class from file geocsv_plugin.
+    :param iface: A QGIS interface instance.
+    :type iface: QgsInterface
+    """
+    from .geocsv_plugin import EditableGeoCsvPlugin
+    return EditableGeoCsvPlugin(iface)
