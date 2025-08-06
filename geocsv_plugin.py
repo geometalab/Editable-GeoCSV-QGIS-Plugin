@@ -27,7 +27,7 @@ from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtGui import QIcon
 
-import resources_rc
+from . import resources_rc
 from .geocsv_controller import GeoCsvNewController, GeoCsvReconnectController
 from .geocsv_service import NotificationHandler
 
