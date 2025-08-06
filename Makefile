@@ -44,7 +44,7 @@ SOURCES = \
 	geocsv_service.py \
 	geocsv_ui.py 			
 
-PLUGINNAME = editablegeocsv
+PLUGINNAME = editable_csv
 
 PY_FILES = \
     __init__.py \
@@ -109,7 +109,7 @@ test: compile transcompile
 	@echo "----------------------"
 
 #deploy: compile doc transcompile
-deploy: compile transcompile
+deploy: compile
 	@echo
 	@echo "------------------------------------------"
 	@echo "Deploying plugin to your .qgis2 directory."
