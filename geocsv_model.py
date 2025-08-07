@@ -291,7 +291,7 @@ class CsvVectorLayer():
         qgsVectorLayer.committedAttributesAdded.connect(self.attributesAdded)
         qgsVectorLayer.committedAttributesDeleted.connect(self.attributesDeleted)
         qgsVectorLayer.committedAttributeValuesChanges.connect(self.attributesValueChanged)
-        iface.mapCanvas().repaintRequested.connect(self.reloadFromDataSource)
+        iface.mapCanvas().mapCanvasRefreshed.connect(self.reloadFromDataSource)
 
     def editingDidStart(self):
         self.qgsVectorLayer.editBuffer().committedAttributesAdded.connect(self.attributesAdded)
