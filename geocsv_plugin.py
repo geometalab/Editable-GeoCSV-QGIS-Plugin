@@ -72,7 +72,7 @@ class EditableGeoCsvPlugin:
         self._iface.removeToolBarIcon(self.addGeoCsvLayerAction)
 
     def _connectToRefreshAction(self):
-        for action in self._iface.mapNavToolBar().actions():
+        for action in self._iface.mapNavToolToolBar().actions():
             if action.objectName() == "mActionDraw":
                 action.triggered.connect(lambda: self._refreshCsvVectorLayers())
                 break

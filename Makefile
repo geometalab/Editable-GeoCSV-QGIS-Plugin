@@ -44,7 +44,7 @@ SOURCES = \
 	geocsv_service.py \
 	geocsv_ui.py 			
 
-PLUGINNAME = editable_csv
+PLUGINNAME = editablegeocsv
 
 PY_FILES = \
     __init__.py \
