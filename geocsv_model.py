@@ -286,7 +286,7 @@ class CsvVectorLayer():
         qgsVectorLayer.featureAdded.connect(self.featureAdded)
         qgsVectorLayer.committedFeaturesRemoved.connect(self.featuresRemoved)
         qgsVectorLayer.geometryChanged.connect(self.geometryChanged)
-        qgsVectorLayer.layerCrsChanged.connect(self.layerCrsDidChange)
+        qgsVectorLayer.crsChanged.connect(self.layerCrsDidChange)
         qgsVectorLayer.attributeDeleted.connect(self.checkAttributeDeleted)
         qgsVectorLayer.committedAttributesAdded.connect(self.attributesAdded)
         qgsVectorLayer.committedAttributesDeleted.connect(self.attributesDeleted)
