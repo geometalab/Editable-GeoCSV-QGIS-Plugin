@@ -36,7 +36,7 @@ from .geocsv_model import CsvVectorLayer, GeoCsvAttributeType, PointCsvVectorLay
 class GeoCsvVectorLayerFactory:
 
     @staticmethod
-    def createCsvVectorLayer(dataSourceHandler, vectorLayerDescriptor, qgsVectorLayer=None):
+    def createCsvVectorLayer(dataSourceHandler, vectorLayerDescriptor, qgsVectorLayer=None, iface=None):
         if not qgsVectorLayer:
             _path = vectorLayerDescriptor.geometryType
             _path += '?index=yes'
@@ -52,7 +52,7 @@ class GeoCsvVectorLayerFactory:
         qgsVectorLayer.updateFields()
         dataProvider.addFeatures(dataSourceHandler.createFeaturesFromCsv(vectorLayerDescriptor))
         qgsVectorLayer.updateExtents()
-        csvVectorLayer = CsvVectorLayer(qgsVectorLayer, vectorLayerDescriptor)
+        csvVectorLayer = CsvVectorLayer(qgsVectorLayer, vectorLayerDescriptor, iface)
         csvVectorLayer.updateGeoCsvPath(dataSourceHandler.getPathToCsvFile())
         return csvVectorLayer
 

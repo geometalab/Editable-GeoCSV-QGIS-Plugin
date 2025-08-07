@@ -33,7 +33,7 @@ from .geocsv_exception import *
 class GeoCsvNewController:
     _instance = None
 
-    def __init__(self, projectSettings):
+    def __init__(self, projectSettings, iface):
         self.geometryFieldUpdate = False
         self.csvtFileIsDirty = False
         self.newDialog = GeoCsvDialogNew()
@@ -42,6 +42,7 @@ class GeoCsvNewController:
         self._initVisibility()
         self._settings = projectSettings
         self._browseOpenPath = self._getDefaultFileOpenDir(projectSettings)
+        self._iface = iface
 
     def _getDefaultFileOpenDir(self, settings):
         openDir = settings.value('lastUsedFileOpenDir', '')
@@ -75,7 +76,7 @@ class GeoCsvNewController:
         if result == 1:
             if self.dataSourceHandler and self.vectorDescriptor:
                 csvVectorLayer = GeoCsvVectorLayerFactory.createCsvVectorLayer(
-                    self.dataSourceHandler, self.vectorDescriptor, qgsVectorLayer
+                    self.dataSourceHandler, self.vectorDescriptor, qgsVectorLayer, self._iface
                 )
                 vectorLayerController = VectorLayerController(csvVectorLayer, self.dataSourceHandler)
                 csvVectorLayer.initController(vectorLayerController)

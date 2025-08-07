@@ -271,8 +271,8 @@ class PointCsvVectorLayerDescriptor(CsvVectorLayerDescriptor):
 
 
 class CsvVectorLayer():
-    def __init__(self, qgsVectorLayer, vectorLayerDescriptor):
-        self._initConnections(qgsVectorLayer)
+    def __init__(self, qgsVectorLayer, vectorLayerDescriptor, iface):
+        self._initConnections(qgsVectorLayer, iface)
         self.qgsVectorLayer = qgsVectorLayer
         self.vectorLayerDescriptor = vectorLayerDescriptor
         self.dirty = False
@@ -280,7 +280,7 @@ class CsvVectorLayer():
     def initController(self, vectorLayerController):
         self.vectorLayerController = vectorLayerController
 
-    def _initConnections(self, qgsVectorLayer):
+    def _initConnections(self, qgsVectorLayer, iface):
         qgsVectorLayer.editingStarted.connect(self.editingDidStart)
         qgsVectorLayer.editingStopped.connect(self.editingDidStop)
         qgsVectorLayer.featureAdded.connect(self.featureAdded)
@@ -291,7 +291,7 @@ class CsvVectorLayer():
         qgsVectorLayer.committedAttributesAdded.connect(self.attributesAdded)
         qgsVectorLayer.committedAttributesDeleted.connect(self.attributesDeleted)
         qgsVectorLayer.committedAttributeValuesChanges.connect(self.attributesValueChanged)
-        qgsVectorLayer.screenUpdateRequested.connect(self.reloadFromDataSource)
+        iface.mapCanvas().repaintRequested.connect(self.reloadFromDataSource)
 
     def editingDidStart(self):
         self.qgsVectorLayer.editBuffer().committedAttributesAdded.connect(self.attributesAdded)
