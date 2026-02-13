@@ -24,7 +24,7 @@ icon=geocsv.png
 category=Vector
 experimental=False
 server=False
-deprecated=False
+deprecated=True
 
 changelog=
     1.0.2 2024-06-20: Update metadata
